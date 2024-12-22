@@ -1,5 +1,5 @@
 from exp.outs.inc_sources.aim_book import *
-from exp.outs.inc_sources.inc_file import inc_sheet
+from exp.outs.inc_sources.inc_files import *
 
 # формируем список данных входящей заявки, отсутствующих в архиве
 def inc_data():
