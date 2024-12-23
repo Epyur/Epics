@@ -1,4 +1,10 @@
+from exp.outs.cheker import *
 
-from exp.outs.cheker import inc_data
+while int(len(new_writes())) > 0:
 
-print(inc_data())
+    print(shs)
+    # записываем данные в строку таблицы
+    for c in range(0, len(shs)):
+        sheet_base.cell(row=er, column=c + 1).value = shs[c]
+        base_book.save('../БИ4.xlsx')
+    break

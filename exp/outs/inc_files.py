@@ -1,7 +1,7 @@
 import xlrd
 
 # разбираем файл заявок
-rb = xlrd.open_workbook('../../excel/inc.xls', formatting_info=True)
+rb = xlrd.open_workbook('../excel/inc.xls', formatting_info=True)
 inc_sheet = rb.sheet_by_index(0)
 inc_index_column = inc_sheet.col_values(colx=0)
 inc_title_row = inc_sheet.row_values(rowx=0)

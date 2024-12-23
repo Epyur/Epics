@@ -1,5 +1,5 @@
-from exp.outs.data_sources.aim_book import *
-from exp.outs.data_sources.inc_files import *
+from aim_book import *
+from inc_files import *
 
 # формируем список данных входящей заявки, отсутствующих в архиве
 def inc_data():
@@ -12,5 +12,15 @@ def inc_data():
                 inc_row.append(a)
     return inc_row
 
-print(inc_title_row)
-print(inc_data())
+inc_data_list = inc_data() # легализуем результат работы функции в качестве списка
+
+er = int(empty_row())
+shs = inc_data()
+
+# записываем данные в строку таблицы
+for c in range(0, len(shs)):
+    sheet_base.cell(row=er, column=c + 1).value = shs[c]
+    base_book.save('../БИ4.xlsx')
+
+print(new_id())
+

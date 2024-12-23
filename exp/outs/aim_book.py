@@ -3,40 +3,17 @@ from inc_files import *
 
 
 #читаем целевой файл
-base_book = openpyxl.open('../../excel/БИ3.1.xlsx')
-sheet_inc = base_book['INc']
+base_book = openpyxl.open('../БИ4.xlsx')
+sheet_base = base_book['Sheet']
 
-#индексируем листы в книге
-def sheet_inf():
-    sheet_count = -1
-    sheet_index = []
-    for i in base_book:
-        sheet_count += 1
-        sheet_index.append(sheet_count)
-        sheet_dict = dict(zip(sheet_index, base_book.sheetnames))
-    return(sheet_dict)
-#print(sheet_inf())
 
-#индексируем столбцы
-def row_inf():
-    global sheet_inc
-    t_index = sheet_inc['2']
-    frst_row = []
-    for cell in t_index:
-        frst_row.append(cell.value)
-        titles = dict(zip(t_index, frst_row))
-    return (titles)
-#print(row_inf())
-
-sheet_inf()
-row_inf()
 id_list = []
 #определяем строку, в которой нет информации и формируем список ID внесенных в таблицу
 def empty_row():
     global id_list
     row_list = []
     index_list = []
-    for row in sheet_inc['A{}:A{}'.format(sheet_inc.min_row, sheet_inc.max_row)]:
+    for row in sheet_base['A{}:A{}'.format(sheet_base.min_row, sheet_base.max_row)]:
         for cell in row:
             if cell.value is not None:
                 row_list.append(cell.value)
@@ -58,6 +35,7 @@ def new_writes():
             new_writes.append(i)
     return new_writes
 
+new_writes_list = new_writes()
 def new_id():
     list_1 = new_writes()
     if len(list_1) > 0:
@@ -70,6 +48,6 @@ print('Пустой ряд:', empty_row())
 print('Список id содержащихся в архиве:', id_list)
 print('Список id содержащихся в хранилище заявок:', inc_id_list)
 print('Список id отсутствующих в архиве:', new_writes())
-print('Первый отсутствующий ID в архиве', new_id())
+print('Первый отсутствующий ID в архиве:', new_id())
 
 
