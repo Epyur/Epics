@@ -1,9 +1,11 @@
 from aim_book import *
 from inc_files import *
+from time import sleep
 
 # формируем список данных входящей заявки, отсутствующих в архиве
+inc_row = []
 def inc_data():
-    inc_row = []
+    global inc_row
     for ii in range(rb_inc.nrows):  # в цикле по количеству всех строк
         data = rb_inc.cell_value(ii, 0)  # получаем значение ячейки (ii-строка, 0-столбец)
         if str(new_id()) == str(data):  # сравниваем заданное значение с полученным, если истина
@@ -17,10 +19,21 @@ inc_data_list = inc_data() # легализуем результат работ�
 er = int(empty_row())
 shs = inc_data()
 
-# записываем данные в строку таблицы
-for c in range(0, len(shs)):
-    sheet_base.cell(row=er, column=c + 1).value = shs[c]
-    base_book.save('../БИ4.xlsx')
+# формируем функцию записи данных в строку таблицы
+def base_saver(a) -> object:
+    for c in range(0, len(shs)):
+        sheet_base.cell(row=er, column=c + a).value = shs[c]
+        bs = base_book.save('БИ4.xlsx')
+    return bs
 
-print(new_id())
+
+# перепроверяем наличие новых данных и записываем
+while int(len(new_writes()) > 0):
+    base_saver(1)
+else:
+    print('Перенос данных завершен')
+
+
+
+
 

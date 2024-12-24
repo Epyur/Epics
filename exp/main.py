@@ -1,5 +1,3 @@
-from exp.outs.cheker import *
-
 while int(len(new_writes())) > 0:
 
     print(shs)

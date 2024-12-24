@@ -3,7 +3,7 @@ from inc_files import *
 
 
 #читаем целевой файл
-base_book = openpyxl.open('../БИ4.xlsx')
+base_book = openpyxl.open('БИ4.xlsx')
 sheet_base = base_book['Sheet']
 
 

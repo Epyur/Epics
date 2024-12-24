@@ -5,7 +5,7 @@ def open_file(file, ind): # вызов файла xls и 1 листа в ней
     rb = xlrd.open_workbook(file, formatting_info=True)
     inc_sheet = rb.sheet_by_index(ind)
     return inc_sheet
-rb_inc = open_file('../excel/inc.xls', 0)
+rb_inc = open_file('excel/inc.xls', 0)
 
 def chose_column(col): # вызов файла xls
     index_column = rb_inc.col_values(colx=col)

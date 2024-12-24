@@ -1,6 +1,6 @@
-print('Hi, PyCharm')
-x = 43
-y = 32
-print(x * y)
-print("End line")
-
+import time
+print('Hello world')
+time.sleep(2)
+print('sleep python function')
+time.sleep(5)
+print('sleep function is working')
