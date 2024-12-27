@@ -44,10 +44,11 @@ def new_id():
         a = 'Новые записи отсутствуют'
     return(a)
 
-print('Пустой ряд:', empty_row())
-print('Список id содержащихся в архиве:', id_list)
-print('Список id содержащихся в хранилище заявок:', inc_id_list)
-print('Список id отсутствующих в архиве:', new_writes())
-print('Первый отсутствующий ID в архиве:', new_id())
+def check_repeater():
+    print('Пустой ряд:', empty_row())
+    print('Список id содержащихся в архиве:', id_list)
+    print('Список id содержащихся в хранилище заявок:', inc_id_list)
+    print('Список id отсутствующих в архиве:', new_writes())
+    print('Первый отсутствующий ID в архиве:', new_id())
 
 
