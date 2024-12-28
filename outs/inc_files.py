@@ -43,7 +43,7 @@ def inc_row_inf():
 # Формируем список входящих идентификаторов
 def inc_id_list():
     inc_id_list = []
-    inc_id = rb_inc_column[1:]
+    inc_id = rb_inc_column[0:]
     for i in inc_id:
         inc_id_list.append(i)  # список входящих идентификаторов
     return inc_id_list

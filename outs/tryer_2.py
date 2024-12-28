@@ -1,5 +1,8 @@
-from cheker import *
+from openpyxl.styles import Alignment
+from openpyxl.utils.dataframe import dataframe_to_rows
 
+from cheker import *
+import pandas as pd
 
 inc_rowe = []
 inc_rows = []
@@ -14,19 +17,17 @@ def inc_data1(id_col):
                 inc_rowe.append(a)
     inc_rows = [inc_rowe[i:i + len(rb_inc_row)] for i in range(0, len(inc_rowe), len(rb_inc_row))]
     return inc_rows
+inc_data1(0)
+print(inc_rows)
 
+df = pd.DataFrame(data=inc_rows, columns=rb_inc_row)
+df = df.map(lambda v: v.replace(',', '\n') if isinstance(v, str) else v)
 
-def base_saver1(frst_column):
-    for i in inc_data1(0):
-        for c in range(0, len(i)):
-            for n in range(0, len(new_writes())):
-                sheet_base.cell(row=er+n, column=c + frst_column).value = i[c]
-                bs = base_book.save(ba_f)
-                continue
-    return bs
+for r in dataframe_to_rows(df, index=False, header=False):
+    sheet_base.append(r)
 
+for row in sheet_base:
+    for cell in row:
+        cell.alignment = Alignment(wrapText=True)
 
-for i in inc_data1(0):
-    print(i)
-print("j")
-base_saver1(1)
+base_book.save(ba_f)

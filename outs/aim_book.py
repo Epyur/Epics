@@ -1,9 +1,12 @@
 import openpyxl
 from inc_files import *
+from tempfile import NamedTemporaryFile
 
+ba_f = 'БИ4.xlsx'
 
 #читаем целевой файл
-base_book = openpyxl.open('БИ4.xlsx')
+base_book = openpyxl.open(ba_f)
+
 sheet_base = base_book['Sheet']
 
 
@@ -19,7 +22,7 @@ def empty_row():
                 row_list.append(cell.value)
                 row_count = len(row_list)
                 index_list.append(str(cell.value))
-                id_list = index_list[2:]
+                id_list = index_list[1:]
             break
     return (row_count + 1)
 
@@ -43,6 +46,7 @@ def new_id():
     else:
         a = 'Новые записи отсутствуют'
     return(a)
+
 
 def check_repeater():
     print('Пустой ряд:', empty_row())
