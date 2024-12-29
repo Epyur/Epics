@@ -5,11 +5,9 @@ from Gen_2.workers.xlsx import *
 def base_saver(data, header, aim_file):
     df = pd.DataFrame(data=data, columns=header)
     df = df.map(lambda v: v.replace('], [', ']\n [') if isinstance(v, str) else v)
-    rws = dataframe_to_rows(df, index=False, header=False)
 
-    for r_idx, row in enumerate(rws, 1):
-        for c_idx, value in enumerate(row, 1):
-            sheet_base.cell(row=r_idx, column=c_idx, value=value)
+    for r in dataframe_to_rows(df, index=False, header=False):
+        sheet_base['F'] = r
 
     bs = base_book.save(aim_file)
     return bs
