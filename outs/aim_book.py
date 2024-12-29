@@ -38,12 +38,13 @@ def new_writes():
             new_writes.append(i)
     return new_writes
 
-new_writes_list = new_writes()
+
 def new_id():
     list_1 = new_writes()
     if len(list_1) > 0:
         a = list_1[0]
     else:
+        False
         a = 'Новые записи отсутствуют'
     return(a)
 

@@ -3,8 +3,9 @@ from inc_files import *
 from openpyxl.styles import Alignment
 from openpyxl.utils.dataframe import dataframe_to_rows
 import pandas as pd
-
-
+print(id_list)
+print(inc_id_list)
+print(id_list != inc_id_list)
 # формируем список данных входящей заявки, отсутствующих в архиве
 inc_rowe = []
 inc_rows = []
@@ -35,15 +36,14 @@ def base_saver(data, header, aim_file):
     bs = base_book.save(aim_file)
     return bs
 
-if len(new_writes_list) > 0:
-    print(new_writes())
-    print(check_repeater())
+print(check_repeater())
+if id_list != inc_id_list:
     #base_saver(inc_rows,rb_inc_row, ba_f)
+    True
 else:
+    print('There are no another data, yet')
 
-    print('There are no new data, YET!')
-
-
+#base_saver(inc_rows,rb_inc_row, ba_f)
 
 
 
