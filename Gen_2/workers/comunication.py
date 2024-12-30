@@ -49,3 +49,20 @@ def check_repeater():
     print('Список id отсутствующих в архиве:', new_writes())
     print('Первый отсутствующий ID в архиве:', new_id())
 
+inc_dict = {}
+inc_dict_list = []
+def inc_bible(num):
+    global inc_dict
+    global inc_dict_list
+    id_column = []
+    count = num
+    for i in inc_rows:
+        for n in i:
+            count += 1
+            id_column.append(count)
+            inc_dict = dict(zip(id_column, i))
+        inc_dict_list.append(inc_dict)
+    return inc_dict_list
+inc_bible(-1)
+
+

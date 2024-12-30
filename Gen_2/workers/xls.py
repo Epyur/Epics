@@ -29,6 +29,7 @@ def inc_title_inf():
         col_index.append(count_)
     inf_dict_col = dict(zip(col_index, rb_inc_row)) # проверочный словарь, для сверки индексов и наименований столбцов
     return inf_dict_col
+inc_title_inf =  inc_title_inf()
 
 # считываем колонку идентификаторов
 def inc_row_inf():
@@ -39,6 +40,9 @@ def inc_row_inf():
         row_index.append(count_row)
     inf_dict_row = dict(zip(row_index, rb_inc_column)) # проверочный словарь, для сверки индексов и значений строк
     return inf_dict_row
+
+inc_row_inf = inc_row_inf()
+
 
 # Формируем список входящих идентификаторов
 def inc_id_list():
