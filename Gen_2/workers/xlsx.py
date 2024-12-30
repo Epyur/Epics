@@ -1,12 +1,9 @@
 import openpyxl
 from Gen_2.excel.routes import bb
 
-
 #читаем целевой файл
 base_book = openpyxl.open(bb)
-
 sheet_base = base_book['Sheet']
-
 
 #определяем строку, в которой нет информации и формируем список ID внесенных в таблицу
 def empty_row():
@@ -19,7 +16,6 @@ def empty_row():
                 row_count = len(row_list)
                 break
     return (row_count + 1)
-
 
 # Create a list to store the values
 id_list = []

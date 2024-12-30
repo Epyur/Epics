@@ -6,6 +6,7 @@ def open_file(file, ind): # вызов файла xls и 1 листа в ней
     rb = xlrd.open_workbook(file, formatting_info=True)
     inc_sheet = rb.sheet_by_index(ind)
     return inc_sheet
+
 rb_inc = open_file(inc_book, 0)
 
 def chose_column(col): # вызов файла xls
@@ -21,15 +22,15 @@ rb_inc_column = chose_column(0)
 rb_inc_row = chose_row(0)
 
 # считаем элементы в титульной строке
-def inc_title_inf():
+def inc_title_inf(title):
     col_index = []
     count_ = -1
     for i in rb_inc_row:
         count_ += 1
         col_index.append(count_)
-    inf_dict_col = dict(zip(col_index, rb_inc_row)) # проверочный словарь, для сверки индексов и наименований столбцов
+    inf_dict_col = dict(zip(col_index, title)) # проверочный словарь, для сверки индексов и наименований столбцов
     return inf_dict_col
-inc_title_inf =  inc_title_inf()
+inc_title_inf =  inc_title_inf(rb_inc_row)
 
 # считываем колонку идентификаторов
 def inc_row_inf():
