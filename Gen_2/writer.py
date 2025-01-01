@@ -16,3 +16,6 @@ if id_list != inc_id_list:
     print('Data were added to base')
 else:
     print('There are no another data, yet')
+
+print(gen_title_dict)
+print(inc_dict_list)

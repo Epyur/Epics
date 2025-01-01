@@ -3,6 +3,7 @@ from Gen_2.workers.xls import *
 from openpyxl.styles import Alignment
 from openpyxl.utils.dataframe import dataframe_to_rows
 import pandas as pd
+from Gen_2.workers.methods import *
 
 inc_id_list = inc_id_list()
 # Сравниваем имеющийся и входящий списки, выбираем новые записи
@@ -65,4 +66,4 @@ def inc_bible(num):
     return inc_dict_list
 inc_bible(-1)
 
-
+gen_title_dict = {**inc_dict, **c_title_inf_dict_1, **c_title_inf_dict_2, **c_title_inf_dict_3}
