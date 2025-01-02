@@ -1,5 +1,6 @@
 import openpyxl
 from Gen_2.excel.routes import bb
+import pandas as pd
 
 #читаем целевой файл
 base_book = openpyxl.open(bb)
@@ -34,3 +35,6 @@ def ids ():    # Iterate through columns
         return id_list
 
 ids()
+
+df = pd.read_excel(bb)
+df.index.name = "№ заявки"

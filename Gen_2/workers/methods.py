@@ -1,5 +1,7 @@
 from Gen_2.workers.xls import *
 import math
+import pandas as pd
+
 # Разбираем результаты испытаний на горючесть
 # разбираем книгу результатов
 c_book = open_file(comb_book, 0) # open the book of measures
@@ -44,18 +46,7 @@ def title_dict_3(title):
 c_title_inf_dict_3 = title_dict_3(c_title_row)
 c_title_dict = {**c_title_inf_dict_1, **c_title_inf_dict_2,**c_title_inf_dict_3}
 
-# inc_dict = {}
-# inc_dict_list = []
-# def inc_bible(num):
-#     global inc_dict
-#     global inc_dict_list
-#     id_column = []
-#     count = num
-#     for i in inc_rows:
-#         for n in i:
-#             count += 1
-#             id_column.append(count)
-#             inc_dict = dict(zip(id_column, i))
-#         inc_dict_list.append(inc_dict)
-#     return inc_dict_list
-# inc_bible(-1)
+c_df = pd.read_excel(comb_book)
+c_df.index.name = '№ Записи заявки на испытания'
+c_df_1 = c_df.iloc[:, 2]
+

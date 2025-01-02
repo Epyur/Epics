@@ -67,3 +67,7 @@ def inc_bible(num):
 inc_bible(-1)
 
 gen_title_dict = {**inc_dict, **c_title_inf_dict_1, **c_title_inf_dict_2, **c_title_inf_dict_3}
+
+
+# ------------------ Проверяем наличие записей результатов экспериментов -------------------------------
+#if
