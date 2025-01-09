@@ -37,4 +37,4 @@ def ids ():    # Iterate through columns
 ids()
 
 df = pd.read_excel(bb)
-df.index.name = "№ заявки"
+df.index.name = "№ заявкиf"

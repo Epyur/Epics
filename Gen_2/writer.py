@@ -17,5 +17,8 @@ if id_list != inc_id_list:
 else:
     print('There are no another data, yet')
 
+tdt = pd.read_xml('jd.tdt')
+
+
 print(gen_title_dict)
 print(inc_dict_list)
