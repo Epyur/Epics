@@ -11,6 +11,7 @@ if __name__ == '__main__':
         counter_x += 1
         x = int(input('Введите номер заявки: '))
 
+
         out_file_name = str(x)
 
         def base_saver(x):
@@ -24,25 +25,30 @@ if __name__ == '__main__':
         if x == 0:
             exit()
 
-        choice1 = int(input("Выберите метод, по которому хотите оформить протокол: \n1 - ГОСТ 30244, метод 2\n2 - ГОСТ 30402\n"))
+        base_saver(x)
+        print('Данные добавлены в базу данных')
+        dict_g = calculator(x).to_dict()
+        context_g = dict_g
 
+        choice1 = int(input("Выберите метод, по которому хотите оформить протокол: \n1 - ГОСТ 30244, метод 2\n2 - ГОСТ 30402\n"))
         if choice1 == 1:
             choice2 = int(input('Выберите форму протокола: \n1 - Полный протокол; \n2 - Краткая справка по испытаниям\n'))
             if choice2 == 1:
-                print('Форма полного протокола пока не готова')
-                continue
+                if x <= n:
+                    doc = DocxTemplate(doc_templ_fg)
+                    doc.render(context_g)
+                    fg = str(out_file_name + '_Г_full' + '.docx')
+                    out_report_fg = os.path.abspath(os.path.join('.', 'out', fg))
+                    doc.save(out_report_fg)
+                else:
+                    print('Свяжитесь с Полищуком Евгением (polishchuk@tn.ru)')
             if choice2 == 2:
-                if x<=101:
-                    base_saver(x)
-                    print('Data were added to base')
-                    dict_x = calculator(x).to_dict()
-                    # print(dict_x)
+                if x <= n:
                     doc = DocxTemplate(doc_templ)
-                    context = dict_x
-                    doc.render(context)
-                    dw = str(out_file_name + '_short' + '.docx')
-                    out_report = os.path.abspath(os.path.join('.', 'out', dw))
-                    doc.save(out_report)
+                    doc.render(context_g)
+                    sg = str(out_file_name + '_Г_short' + '.docx')
+                    out_report_sg = os.path.abspath(os.path.join('.', 'out', sg))
+                    doc.save(out_report_sg)
                 else:
                     print('Свяжитесь с Полищуком Евгением (polishchuk@tn.ru)')
         if  choice1 == 2:

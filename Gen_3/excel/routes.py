@@ -12,3 +12,7 @@ cus_book = os.path.abspath(os.path.join('.', 'excel', 'custiomer.xls')) # жур
 
 
 doc_templ = os.path.abspath(os.path.join('.', 'docx', 'g_short.docx'))
+doc_templ_fg = os.path.abspath(os.path.join('.', 'docx', 'g_full.docx'))
+
+
+n = 101
