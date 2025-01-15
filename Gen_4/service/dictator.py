@@ -1,5 +1,7 @@
+from functools import reduce
 import numpy as np
 import pandas as pd
+from collections.abc import MutableMapping
 from Gen_4.service.routes import in_title, comb_book
 
 
@@ -11,6 +13,7 @@ def start_rename():
     title_dict = series_1.to_dict()
     return title_dict
 
+# формируем словарь из датафрейм с переименованием ключей на основании переводного словаря
 def dict_creator(file, index1, val):
     title_dict = start_rename()
     df_start = pd.read_excel(file)
@@ -30,7 +33,7 @@ def dict_creator(file, index1, val):
         # print(ekn_string_dict)
     else:
          print(f'Указанное значение {index1} отсутствует в базе данных')
-         string_dict = {}
+         string_dict = False
     return string_dict
 
 # объединение словарей: замена значений в первом словаре только если поле пустое, в противном случае значение из второго словаря стирается. Нужно быть внимательным при выборе порядка словарей.
@@ -87,18 +90,85 @@ def dict_unition(dict1, dict2, prefix1=False, prefix2=False):
 #     sorted_dict = dict(zip(key_list_2, internal_dict))
 #     return sorted_dict
 
-def experiment(dict1):
-    list1 = []
-    list2 = ['len_1', 'len_2', 'len_3', 'len_4']
-    list3 = []
-    list4 = []
-    list5 = []
-    list6 = []
+# выбираем из общего словаря пары ключ - значение, над которыми необходимо провести действия
+def selection(dict1, val_list):
+    list1 = {}
+    list2 = val_list
     for i in dict1:
         if i in list2:
-            list1.append(dict1.get(i))
+            list1.update({i: dict1[i]})
+    return list1
+
+# то-же что и selection но словари отбираем в список
+def selection2(dict1, val_list):
+    list1 = []
+    list2 = val_list
+    for i in dict1:
+        if i in list2:
+            list1.append(dict1[i])
+    return list1
+
+#  сортируем словари по ключам вложенных словарей/ выводит словарь вида {3: ['Нет'], 2: ['Нет'], 1: ['Нет']}
+#  где цифра это ключ вложенного словаря, список это значение вложенного словаря
+def sorter(dict1, val_list):
+    list1 = selection2(dict1, val_list)
+    s = {k: [list1[j][k] for j in range(len(list1))] for k in list1[0].keys()}
+    return s
+
+def average_exp(dict1, val_list, name):
+    s = sorter(dict1, val_list)
+    D = {}
+    for i in s:
+        mean_i = sum(s[i])/len(s[i])
+        D.update({i: mean_i})
+    dx ={name: D}
+    df = dict1 | dx
+    return df
+
+def average_gen(dict1, val_list, name):
+    s = selection2(dict1, val_list)
+    s1 = s[0]
+    d = sum(s1.values()) / len(s1)
+    x = round(d, 2)
+    dx = {name: x}
+    df = dict1|dx
+    return df
+
+def differences(dict1, val_list, name):
+    s = sorter(dict1, val_list)
+    dict2 = {}
+    for i in s:
+       dif =  100 - s[i][1] * 100 / s[i][0]
+       x = round(dif, 2)
+       dict2.update({i: x})
+    dx = {name: dict2}
+    df = dict1|dx
+    return df
+
+def search_value(dict1, val_list, name, target_value, aim_value, alternate_value):
+    s = sorter(dict1, val_list)
+    for i in s:
+        val = s[i]
+        if target_value == val:
+            dx = {name: aim_value}
+        else:
+            dx = {name: alternate_value}
+    df = dict1|dx
+    return df
+# make dict flat again
+def flatten_dict(dict1):
+    dic = pd.json_normalize(dict1, sep='_')
+    d_flat = dic.to_dict(orient='records')[0]
+    return d_flat
 
 
-
-    print(list1)
-
+def flatten_simple(dict1, val_list):
+    d = {}
+    for i in dict1:
+        for c in val_list:
+            if i == c:
+                in_d = dict1[i]
+                for x in in_d:
+                    val = in_d[x]
+                    d.update({c: val})
+    return d

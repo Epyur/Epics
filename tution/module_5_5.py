@@ -21,7 +21,7 @@ class House:
                 print(i)
 
     def __str__(self):
-        return f"Name of house {self.name}, number of floors {self.number_of_floors}"
+        return f"Name of house: {self.name}, \nNumber of floors: {self.number_of_floors}"
 
     def __len__(self):
         return self.number_of_floors
