@@ -14,7 +14,7 @@ class Product:
 
 
 class Shop:
-    __file_name = 'product.txt'
+    __file_name = '7_2/product.txt'
 
     def get_products(self):
         if os.path.isfile(self.__file_name):
