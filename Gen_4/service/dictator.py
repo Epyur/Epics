@@ -32,7 +32,6 @@ def dict_creator(file, index1, val):
         string_dict = string.to_dict()
         # print(ekn_string_dict)
     else:
-         print(f'Указанное значение {index1} отсутствует в базе данных')
          string_dict = False
     return string_dict
 

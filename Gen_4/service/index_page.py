@@ -11,9 +11,9 @@ counter_x = 0
 
 while counter_x <= 100:
     counter_x += 1
-    x = int(input('Введите номер заявки: '))
+    x = int(input('Введите номер заявки или 0, для завершения программы: '))
     dict_0 = {'ID': x} # словарь ID
-    print(dict_0)
+    # print(dict_0)
     if x == 0:
         print("До свидания!")
         exit()
@@ -30,23 +30,24 @@ while counter_x <= 100:
                 # print(ekn)
                 dict_2 = dict_creator(ekn_book, 'ekn', ekn) # получаем словарь информации о материале
                 # print(dict_2)
-            else:
-                print('В заявке не указан ЕКН')
-                choice1 = int(input("Выберите действие: \n1 - Продолжить без ЕКН\n2 - Ввести ЕКН\n"))
-                if choice1 == 1:
-                    pass
-                if choice1 == 2:
-                    ekn_new = int(input('Введите № ЕКН: '))
-                    dict_1.update({'екн': ekn_new})
-                    dict_2 = dict_creator(ekn_book, 'ekn', ekn)
-                    # print(dict_2)
-            dict_0_1 = dict_unition(dict_0, dict_1)
+
+            if dict_2 is False or dict_1['ekn'] == np.nan:
+                print('В заявке не указан ЕКН или ЕКН указан не верно')
+                ekn_new = int(input('Введите № ЕКН, либо введите 1 - НИОКР Техслужбы СБЕ; \n2 - НИОКР Завода ПИР; 3 - НИОКР завода ПВХ Мембран): '))
+                dict_1.update({'екн': ekn_new})
+                dict_2 = dict_creator(ekn_book, 'ekn', ekn_new)
+                # print(dict_2)
+            dict_united = dict_unition(dict_0, dict_1)
             # print(dict_0_1)
-            dict_0_2 = dict_unition(dict_0_1, dict_2)
-            print(dict_0_2)
-            dict_3 = combustor(x)
-            dict_0_3 = dict_unition(dict_0_2, dict_3)
-            print(dict_0_3)
+
+            dict_united = dict_unition(dict_united, dict_2)
+            # print(dict_0_2)
+            dict_3 = combustor(x) # точка входа в модуль comb.py
+            if dict_3 is False:
+                print(f'В базе данных испытаний по методу 2 ГОСТ 30244 запись с ID {x} отсутствует')
+            else:
+                dict_united = dict_unition(dict_united, dict_3) # точка выхода из модуля comb,py
+            print(dict_united)
 
 
 
@@ -55,6 +56,5 @@ while counter_x <= 100:
 # из словаря заявки получаем номер Екн и если он заполнен, то получаем сведения о материале
 
 
-    zf = pd.DataFrame(list(dict_0_3.items()))
-    #
-    ds = zf.to_excel('2.xlsx')
+            zf = pd.DataFrame(list(dict_united.items()))
+            ds = zf.to_excel('2.xlsx')
