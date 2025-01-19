@@ -12,6 +12,7 @@ flam_book = os.path.abspath(os.path.join('.', 'db', '30402.xls')) # журнал
 ekn_book = os.path.abspath(os.path.join('.', 'db', 'EKN.xlsx')) # книга ЕКН
 amb_book = os.path.abspath(os.path.join('.', 'db', 'ambient.xls')) # журнал условий в лаборатории
 cus_book = os.path.abspath(os.path.join('.', 'db', 'custiomer.xls')) # журнал условий в лаборатории
+out_names = os.path.abspath(os.path.join('.', 'db', 'out_names.xlsx'))
 
 # файлы шаблонов отчетов
 doc_templ = os.path.abspath(os.path.join('.', 'temple', 'g_short.docx'))
