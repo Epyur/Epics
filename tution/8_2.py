@@ -16,9 +16,9 @@ def calculate_average(*numbers):
     if isinstance(*numbers, (int, float)):
         return None
     try:
-        tuple_pers_sum = personal_sum(*numbers)
+        res_sum = personal_sum(*numbers)
 
-        return tuple_pers_sum[0] / (len(*numbers) - tuple_pers_sum[1])
+        return res_sum[0] / (len(*numbers) - res_sum[1])
     except ZeroDivisionError:
         return 0
     except TypeError:
