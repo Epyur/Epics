@@ -5,6 +5,7 @@ from docxtpl import DocxTemplate
 
 
 directory_path = os.path.dirname(os.path.abspath(__file__))
+lpi_db = os.path.abspath(os.path.join('.', 'db', 'LPI.db'))
 in_title = os.path.abspath(os.path.join('.', 'db', 'in_title.xlsx')) # файл входящих заявок
 inc_book = os.path.abspath(os.path.join('.', 'db', 'inc.xls')) # файл входящих заявок
 comb_book = os.path.abspath(os.path.join('.', 'db', '302442.xls')) # журнал результатов испытаний на горючесть
