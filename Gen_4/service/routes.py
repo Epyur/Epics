@@ -20,4 +20,10 @@ doc_templ = os.path.abspath(os.path.join('.', 'temple', 'g_short.docx'))
 doc_templ_fg = os.path.abspath(os.path.join('.', 'temple', 'g_full.docx'))
 
 
+
 n = 101
+
+
+book_bible = {in_title: 'IncomingTitle', inc_book: 'IncomingApplication', comb_book: "CombustionBook",
+              flam_book: 'FlamBook', ekn_book: 'ProductInfo', amb_book: 'AmbientConditions',
+              cus_book: 'Customers', out_names: 'OutTitles'}
