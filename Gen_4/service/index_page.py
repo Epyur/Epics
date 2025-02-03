@@ -15,7 +15,7 @@ while counter_x <= 100:
         print("До свидания!")
         exit()
     else:
-        dict_1 = dict_creator(inc_book, 'ID', x, ['place', 'ext_lab_name', 'number_of_samples', 'priority', 'budget', 'expense_item', 'matching_agent', 'matching_agent_mail']) # информация о входящей заявке
+        dict_1 = dict_creator(inc_book, 'ID', x, ['place', 'number_of_samples', 'priority', 'budget', 'expense_item', 'matching_agent', 'matching_agent_mail']) # информация о входящей заявке
         # print(dict_1)
         # print(dict_1.get('ekn'))
 
