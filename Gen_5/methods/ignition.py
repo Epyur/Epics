@@ -20,7 +20,6 @@ def ignitor(x, dict2=None):
         dict_4.update({'product_number': c})
 
         kptp = sorter_2(dict_4, 'ptp', 'ignition_fact')
-
         dict_4.update({'kptp': kptp})
 
         gr = ptp_indicator(kptp)

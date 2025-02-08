@@ -6,12 +6,8 @@ propogation_group = {'РП1': 4, 'РП2': 3, 'РП3': 2, 'РП4': 1}
 
 def group_compare(dict2, aim_ind, real_indicator, group_dict):
     a_i = dict2[aim_ind]
-
-    try:
-        if group_dict[a_i] <= group_dict[real_indicator]:
-            p = 'Соответствует'
-        else:
-            p = 'Не соответствует'
-    except:
-        p = 'н/у'
+    if group_dict[a_i] <= group_dict[real_indicator]:
+        p = 'Соответствует'
+    else:
+        p = 'Не соответствует'
     return p

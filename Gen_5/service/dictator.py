@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 from collections.abc import MutableMapping
 
-from Gen_4.methods.indicators import group
-from Gen_4.service.routes import in_title, out_names
+from Gen_5.methods.indicators import group
+from Gen_5.service.routes import in_title, out_names
 
 # Формируем переводной словарь для входящих названий
 def start_rename():
@@ -52,6 +52,7 @@ def dict_unition(dict1, dict2, prefix1=False, prefix2=False):
                     list_dict1.append(key_a)
                 if dict1.get(key_a) is not np.nan:
                     list_key.append(key_b)
+                    #print(list_key)
                 else:
                     pass
     # удаляем совпадающие записи и переносим в первый список записи, отсутствующие в нем, затем удаляем повторяющиеся записи из второго словаря
@@ -284,17 +285,11 @@ def exp_counter(dict1, val_list):
 
 def sorter_2(dict1, val_list1, val_list2):
     list1 = []
-    j = 30
     for a in dict1[val_list1]:
         for b in dict1[val_list2]:
             if a == b and dict1[val_list2][b] == 'Да':
                 list1.append(dict1[val_list1][a])
-                j = dict1[val_list1][a]
-                #print(j)
-        if list1 is list:
-            list2 = min(list1)
-        else:
-            list2 = j
+        list2 = min(list1)
     return list2
 
 def deleter(dict1, val):
