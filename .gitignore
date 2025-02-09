@@ -6,3 +6,5 @@ tg_bot/config/t.py
 /Gen_5/db
 /Gen_5/temple
 /Gen_4/temple
+/Gen_5/out
+/Gen_5/dist/out
