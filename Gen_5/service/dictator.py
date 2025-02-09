@@ -289,7 +289,10 @@ def sorter_2(dict1, val_list1, val_list2):
         for b in dict1[val_list2]:
             if a == b and dict1[val_list2][b] == 'Да':
                 list1.append(dict1[val_list1][a])
-        list2 = min(list1)
+        try:
+            list2 = min(list1)
+        except:
+            list2 = list1
     return list2
 
 def deleter(dict1, val):

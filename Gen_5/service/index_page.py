@@ -3,20 +3,17 @@ from .routes import *
 from ..methods.comb import *
 from .saver import *
 from ..methods.ignition import ignitor
-from .windows import *
 
 
-x=ExampleApp()
-
-counter_x = 0
-
-while counter_x <= 100:
+def process_input_value(x):
+    counter_x = 0
     counter_x += 1
-    x = x.onButtonClick(event)
+    message = []
+
     dict_0 = {'ID': x} # словарь ID
     # print(dict_0)
     if x == 0:
-        print("До свидания!")
+        message.append("До свидания!")
         exit()
     else:
         dict_1 = dict_creator(inc_book, 'ID', x, ['place', 'number_of_samples', 'priority', 'budget', 'expense_item', 'matching_agent', 'matching_agent_mail']) # информация о входящей заявке
@@ -24,7 +21,7 @@ while counter_x <= 100:
         # print(dict_1.get('ekn'))
 
         if dict_1 is False:
-            print(f'ID {x} отсутствует в базе данных')
+            message.append(f'ID {x} отсутствует в базе данных')
         else:
             if dict_1.get('ekn') is not np.nan:
                 ekn = dict_1.get('ekn')
@@ -33,8 +30,8 @@ while counter_x <= 100:
                 # print(dict_2)
 
             if dict_2 is False or dict_1['ekn'] == np.nan:
-                print('В заявке не указан ЕКН или ЕКН указан не верно')
-                ekn_new = int(input('Введите № ЕКН, либо введите 1 - НИОКР Техслужбы СБЕ; \n2 - НИОКР Завода ПИР; 3 - НИОКР завода ПВХ Мембран): '))
+                message.append('В заявке не указан ЕКН или ЕКН указан не верно, проверьте заявку.')
+                ekn_new = 1
                 dict_1.update({'екн': ekn_new})
                 dict_2 = dict_creator(ekn_book, 'ekn', ekn_new)
                 # print(dict_2)
@@ -45,12 +42,12 @@ while counter_x <= 100:
             # print(dict_0_2)
             dict_3 = combustor(x, dict2=dict_united) # точка входа в модуль comb.py
             if dict_3 is False:
-                print(f'В базе данных испытаний по методу 2 ГОСТ 30244 запись с ID {x} отсутствует')
+                message.append(f'В базе данных испытаний по методу 2 ГОСТ 30244 запись с ID {x} отсутствует')
             else:
                 dict_united = dict_unition(dict_united, dict_3) # точка выхода из модуля comb,py
-                choice_report_30244 = int(input('Данные по результатам испытаний по Метод 2 ГОСТ 30244 введены. Выберите '
-                                               'форму отчета Word: \n1 - Полный протокол; \n2 - Краткая справка по испытаниям'
-                                                '\n3 - продолжить без формирования протокола \n'))
+                message.append(
+                    f'Результаты испытаний по методу 2 ГОСТ 30244 добавлены в отчетные файлы. Смотрите в папке "out"')
+                choice_report_30244 = 2
                 if choice_report_30244 == 1:
                     templ_30244 = doc_templ_fg
                     suffix = "_full"
@@ -64,9 +61,10 @@ while counter_x <= 100:
 
             dict_4 = ignitor(x, dict2=dict_united) #Точка входа в модуль ignition.py
             if dict_4 is False:
-                print(f'В базе данных испытаний по методу ГОСТ 30402 запись с ID {x} отсутствует')
+                message.append(f'В базе данных испытаний по методу ГОСТ 30402 запись с ID {x} отсутствует')
             else:
                 dict_united = dict_unition(dict_united, dict_4, prefix2='ignition')
+                message.append(f'Результаты испытаний по методу ГОСТ 30402 добавлены в отчетный файл. Смотрите в папке "out"')
                 # choice_report_30244 = int(
                 #     input('Данные по результатам испытаний по Метод 2 ГОСТ 30244 введены. Выберите '
                 #           'форму отчета Word: \n1 - Полный протокол; \n2 - Краткая справка по испытаниям'
@@ -86,31 +84,5 @@ while counter_x <= 100:
             dict_united_renamed = final_rename(dict_united)
             report_to_excel(dict_united_renamed, str(x))
 
+        return message
 
-
-
-
-def main():
-    app = QApplication(sys.argv)
-
-    # Создание главного окна
-    window = QMainWindow()
-    window.setGeometry(400, 400, 400, 300)
-    window.setWindowTitle("PyQt5 Example")
-
-    # Поле для ввода текста
-    input_field = QLineEdit(window)
-    input_field.move(100, 100)
-    input_field.resize(200, 40)  # Ширина и высота поля ввода
-
-    # Кнопка
-    button = QPushButton("Нажми меня!", window)
-    button.move(100, 150)
-
-    # Подключение функции к кнопке
-    button.clicked.connect(on_button_click)
-
-    # Отображение окна
-    window.show()
-
-    sys.exit(app.exec_())

@@ -60,7 +60,7 @@ def combustor(x, dict2=None):
         c = exp_counter(dict_3, 'exp_id') * 4
         dict_3.update({'product_number': c})
             # добавляем данные о дыме
-        print(dict_3['tp1_smog'][1])
+        # print(dict_3['tp1_smog'][1])
         if np.isnan(dict_3['tp1_smog'][1]):
             g = 'temp_of_smog'
         else:
