@@ -1,0 +1,2 @@
+def TDT():
+    return None
