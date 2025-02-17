@@ -71,6 +71,13 @@ def combustor(x, dict2=None):
                              dict2=dict2, func=smog_indicator, func2=group_compare, name2='temp_of_smog_group',
                              name3='temp_of_smog_compare', group_dict=group)
         # print(dict_3)
+        """
+                Обрабатываем данные термодата
+                """
+        # формируем Датафрейм из файла термодата
+        df = dataframe_tdt(dict_3, 700, x)
+
+        dict_3 = dict_3 | df
         dict_3 = average_gen(dict_3, 'temp_of_smog', 'mean_temp_of_smog_gen', 'comb_indicator', dict2=dict2,
                              func=smog_indicator, func2=group_compare, name2='mean_temp_of_smog_group',
                              name3='mean_temp_of_smog_compare', group_dict=group)
@@ -111,13 +118,7 @@ def combustor(x, dict2=None):
         dict_4 = flatten_simple(dict_4, ['amb_temp', 'amb_pres', 'amb_moist'])
         dict_3 = dict_unition(dict_4, dict_3, 'comb')
 
-        """
-        Обрабатываем данные термодата
-        """
-        # формируем Датафрейм из файла термодата
-        df = dataframe_tdt(dict_3, 700, x)
-        
-        dict_3 = dict_3 | df
+
 
     return dict_3
 
