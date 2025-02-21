@@ -31,9 +31,15 @@ def ignitor(x, dict2=None):
         d_3id1 = dict_4['exp_date'][1]
         d_3id2 = dict_4['place'][1]
         list1 = [d_3id1, d_3id2]
-        dict_5 = dict_creator(amb_book, ['exp_date', 'place'], d_3id1)
-        dict_5 = deleter(dict_5, d_3id2)
-        dict_5 = flatten_simple(dict_5, ['amb_temp', 'amb_pres', 'amb_moist'])
-        dict_4 = dict_unition(dict_5, dict_4)
+
+        try:
+            dict_5 = dict_creator(amb_book, ['exp_date', 'place'], d_3id1)
+            dict_5 = deleter(dict_5, d_3id2)
+            dict_5 = flatten_simple(dict_5, ['amb_temp', 'amb_pres', 'amb_moist'])
+            dict_4 = dict_unition(dict_5, dict_4)
+        except Exception as e:
+            print('Нет данных об условиях окружающей среды при проведении испытаний')
+
+
     return dict_4
 
