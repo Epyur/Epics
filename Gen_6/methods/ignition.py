@@ -28,7 +28,7 @@ def ignitor(x, dict2=None):
         compare = group_compare(dict2, 'flam_indicator', gr, ignition_group)
         dict_4.update({'compare': compare})
 
-        d_3id1 = dict_4['exp_date'][1]
+        d_3id1 = dict_4['exp_date_vsm'][1]
         d_3id2 = dict_4['place'][1]
         list1 = [d_3id1, d_3id2]
 

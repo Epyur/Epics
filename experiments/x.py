@@ -1,20 +1,44 @@
-# import openpyxl
-#
-# rb = openpyxl.open('1.xlsx')
-# rb_sheet = rb['Sheet1']
-# print(rb_sheet)
-#
-# list_1 = [[3, 4, 5], [6, 7, 8]]
-# count = 0
-# for item in list_1:
-#     count += 1
-#     for i in item:
-#         rb_sheet.cell(count, i).value = i
-#
-#     rb.save('1.xlsx')
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
-lst = ['a', 'b', 'c', 'd']
+# Создаем DataFrame из предоставленных данных
+data = {
+    'Лаборатория': [
+        'ЦЭИИС', 'ООО "Фаерлаб"', 'МГСУ', 'Биквест-Центр'
+    ],
+    'Плотность теплового потока': [
+        [30, 20, 10, 15, 15, 15],
+        [10, 10, 15, 15, 15, 10, 20, 30],
+        [10, 10, 15, 15, 15, 10, 20, 30],
+        [10, 10, 15, 15, 15, 10, 20, 30]
+    ],
+    'Время воспламенения': [
+        [27.0, 53.0, None, 261.0, 312.0, 165.0],
+        [None, None, 59.0, 57.0, 62.0, None, 48.0, 27.0],
+        [None, None, 523.0, 724.0, 586.0, None, 67.0, 32.0],
+        [None, None, 423.0, 431.0, 425.0, None, 64.0, 32.0]
+    ]
+}
 
-del lst[0]
+# Преобразуем данные в длинный формат
+df = pd.DataFrame(data)
+df = df.explode(['Плотность теплового потока', 'Время воспламенения'])
+df = df.dropna(subset=['Время воспламенения'])
 
-print(lst)
+# Создаем график
+plt.figure(figsize=(12, 8))
+
+# Группируем по лабораториям
+for lab, group in df.groupby('Лаборатория'):
+    plt.plot(group['Плотность теплового потока'],
+             group['Время воспламенения'],
+             'o-',
+             label=lab)
+
+plt.title('Зависимость времени воспламенения от плотности теплового потока')
+plt.xlabel('Плотность теплового потока')
+plt.ylabel('Время воспламенения, с')
+plt.legend(loc='upper left')
+plt.grid(True)
+plt.show()

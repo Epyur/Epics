@@ -2,6 +2,7 @@ import numpy as np
 from deepmerge import always_merger
 
 from ..service.dictator import *
+from ..service.photo import PhotoFinder
 from ..service.routes import *
 from .indicators import *
 from ..service.tdt import dataframe_tdt
@@ -65,13 +66,14 @@ def combustor(x, dict2=None):
             # добавляем данные о дыме
         # print(dict_3['tp1_smog'][1])
         # формируем Датафрейм из файла термодата
+
         try:
             temp_dict = {}
             temp_dict2 = {}
             temp_dict3 = {}
             for ex in dict_3['start_time']:
                 df = dataframe_tdt(dict_3, 900, x, ex)
-                print(df)
+                # print(df)
                 if ex == 3:
                     temp_dict3.update(df)
                 if ex == 2:
@@ -84,7 +86,7 @@ def combustor(x, dict2=None):
 
             dict_3 = dict_3 | temp_dict3
         except:
-            print('график не сформирован')
+            pass
 
         if np.isnan(dict_3['temp_of_smog'][1]):
             g = ['tp1_smog', 'tp2_smog', 'tp3_smog', 'tp4_smog']
@@ -114,12 +116,15 @@ def combustor(x, dict2=None):
         dict_3 = estimation(dict_3, 'mass_loss', 'mass_loss_group', 'comb_indicator', dict2=dict2,
                             func=mass_indicator, func2=group_compare, name2='mass_loss_group_compare', group_dict=group)
         # print(dict_3)
+
         dict_3 = estimation(dict_3, 'combustion_time', 'combustion_time_group', 'comb_indicator', dict2=dict2,
                              func=time_indicator, func2=group_compare, name2='combustion_time_group_compare', group_dict=group)
         dict_3 = average_gen(dict_3, 'combustion_time', 'combustion_time_gen','comb_indicator', dict2=dict2, func=time_indicator,
                              func2=group_compare, name2='combustion_time_gen_group', name3='combustion_time_gen_compare', group_dict=group)
         # print(dict_3)
-        dict_3 = search_value(dict_3, 'burning_drops', 'burning_drops_gen', 'Да', 'Да', 'Нет')
+
+        dict_3 = search_value(dict_3, 'burning_drops', 'burning_drops_gen', 'Да', 'Нет')
+
         # print(dict_3)
         dict_3 = estimation(dict_3, 'burning_drops', 'burning_drops_group', 'comb_indicator', dict2=dict2,
                             func=drops_indicator, func2=group_compare, name2='burning_drops_group_compare', group_dict=group)
@@ -138,6 +143,7 @@ def combustor(x, dict2=None):
             dict_4 = flatten_simple(dict_4, ['amb_temp', 'amb_pres', 'amb_moist'])
             dict_3 = dict_unition(dict_4, dict_3, 'comb')
         except:
-            print('Отсутствуют данные об условиях окружающей среды при проведении испытаний на горючесть')
+            pass
+            # print('Отсутствуют данные об условиях окружающей среды при проведении испытаний на горючесть')
     return dict_3
 

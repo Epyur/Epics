@@ -163,14 +163,13 @@ def differences(dict1, val_list, name):
     df = dict1|dx
     return df
 
-def search_value(dict1, val_list, name, target_value, aim_value, alternate_value):
-    s = sorter(dict1, val_list)
-    for i in s:
-        krit = s[i]
-        if target_value == krit:
-            dx = {name: aim_value}
-        else:
-            dx = {name: alternate_value}
+def search_value(dict1, val_list, name, target_value, alternate_value):
+    d = dict1[val_list]
+    s = set(d.values())
+    if target_value in s:
+        dx = {name: target_value}
+    else:
+        dx = {name: alternate_value}
     df = dict1|dx
     return df
 
