@@ -16,6 +16,7 @@ def dataframe_tdt(dict_in, delta, out_num, exp_num):
 
 
     exp_date = dict_in['exp_date'][exp_num] # достаем дату из исходного словаря
+    # print(exp_date)
     date_list = exp_date.split('-') # Разбираем дату на составляющие
     year_of_date = date_list[0] # достаем год
     month_of_date = date_list[1] # достаем месяц
@@ -31,7 +32,11 @@ def dataframe_tdt(dict_in, delta, out_num, exp_num):
     # Открываем файл для чтения
     with open(file_path, newline='', encoding='utf-8') as file:
         # Создаем объект reader для чтения данных в формате csv
-        reader = csv.reader(file, delimiter=' ')
+        try:
+            reader = csv.reader(file, delimiter=' ')
+        except:
+            print('No such file')
+
         df = pd.DataFrame(list(reader))
         df = df.drop([0, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15, 17, 18, 19], axis=1)
 

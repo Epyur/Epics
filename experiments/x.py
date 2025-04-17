@@ -1,44 +1,58 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
+import aspose.slides as slides
+import os
+from pptx import Presentation
 
-# Создаем DataFrame из предоставленных данных
-data = {
-    'Лаборатория': [
-        'ЦЭИИС', 'ООО "Фаерлаб"', 'МГСУ', 'Биквест-Центр'
-    ],
-    'Плотность теплового потока': [
-        [30, 20, 10, 15, 15, 15],
-        [10, 10, 15, 15, 15, 10, 20, 30],
-        [10, 10, 15, 15, 15, 10, 20, 30],
-        [10, 10, 15, 15, 15, 10, 20, 30]
-    ],
-    'Время воспламенения': [
-        [27.0, 53.0, None, 261.0, 312.0, 165.0],
-        [None, None, 59.0, 57.0, 62.0, None, 48.0, 27.0],
-        [None, None, 523.0, 724.0, 586.0, None, 67.0, 32.0],
-        [None, None, 423.0, 431.0, 425.0, None, 64.0, 32.0]
-    ]
-}
+trace_f = os.path.abspath(r'C:\Users\epyur\OneDrive\Документы\temple\temple.pptx')
 
-# Преобразуем данные в длинный формат
-df = pd.DataFrame(data)
-df = df.explode(['Плотность теплового потока', 'Время воспламенения'])
-df = df.dropna(subset=['Время воспламенения'])
+with slides.Presentation(trace_f) as prc:
+    print(list(prc.slides))
+    for i in [40, 41, 42, 43, 44, 45]:
+        slide = prc.slides[i]
+        prc.slides.remove(slide)
 
-# Создаем график
-plt.figure(figsize=(12, 8))
+    prc.save('new_one.pptx', slides.export.SaveFormat.PPTX)
 
-# Группируем по лабораториям
-for lab, group in df.groupby('Лаборатория'):
-    plt.plot(group['Плотность теплового потока'],
-             group['Время воспламенения'],
-             'o-',
-             label=lab)
 
-plt.title('Зависимость времени воспламенения от плотности теплового потока')
-plt.xlabel('Плотность теплового потока')
-plt.ylabel('Время воспламенения, с')
-plt.legend(loc='upper left')
-plt.grid(True)
-plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def remove_text(presentation_path, search_text):
+    # Открываем презентацию
+    prs = Presentation(presentation_path)
+
+    # Проходим по всем слайдам
+    for slide in prs.slides:
+        # Проходим по всем текстовым фреймам на слайде
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                text_frame = shape.text_frame
+
+                # Проходим по всем абзацам в текстовом фрейме
+                for paragraph in text_frame.paragraphs:
+                    # Проходим по всем runs (частям текста) в абзаце
+                    for run in paragraph.runs:
+                        # Если текст содержит искомое слово
+                        if search_text in run.text:
+                            # Заменяем текст на пустой
+                            run.text = run.text.replace(search_text, "")
+
+    # Сохраняем измененную презентацию
+    prs.save(presentation_path)
+
+remove_text('new_one.pptx', 'Evaluation only.')
+remove_text('new_one.pptx','Created with Aspose.Slides for Python via .NET 25.2.')
+remove_text('new_one.pptx','Copyright 2004-2025Aspose Pty Ltd.')
+
+os.startfile('new_one.pptx')

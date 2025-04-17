@@ -1,8 +1,8 @@
 import ast
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
-
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -97,7 +97,6 @@ def Picator(d_f, ax_x, ax_y, x_nam, y_nam, indicator, graf_nam, file_nam, sheet_
         lambda x: convert_to_list(x) if isinstance(x, str) else
             [float(x)] if pd.notna(x) else [])
 
-    # Остальной код остается прежним:
     d_f = d_f.explode([ax_x, ax_y])
     d_f = d_f.dropna(subset=[ax_y])
     d_f = d_f.reset_index(drop=True)
@@ -297,25 +296,73 @@ def ConditionFrame(d_f, condition, file_nam, sheet_nam):
     return new_df
 
 
-def SelectAndFilter(d_f, select_column, column_name, filters, file_nam, sheet_nam, dict_to_rename):
+def SelectAndFilter(d_f,
+                    select_column = None,
+                    column_name=None,
+                    filters=None,
+                    date_column=None,
+                    file_nam=None,
+                    sheet_nam=None,
+                    dict_to_rename=None,
+                    start_date=None,
+                    end_date=None,
+                    quarter=None,
+                    half_year=None,
+                    drop_date=None):
     try:
+        # Проверка на None перед работой с датафреймом
+        if d_f is None:
+            raise ValueError("Входной датафрейм не должен быть None")
+
         d_f = d_f.reset_index()
-        # Проверка существования столбца
-        if column_name in d_f.columns:
+        if select_column:
+            # Основная фильтрация
             filtered_data = d_f[select_column]
-            filtered_data = filtered_data[filtered_data[column_name] == filters]
-            new_dataframe = filtered_data.copy()
-            if dict_to_rename is None:
-                pass
-            else:
-                new_dataframe = new_dataframe.rename(columns=dict_to_rename)
+        else:
+            filtered_data = d_f
+
+        if column_name:
+            filtered_data = filtered_data[filtered_data[column_name].isin(filters)]
+
+        # Конвертация столбца в формат даты
+        if date_column:
+            filtered_data[date_column] = pd.to_datetime(filtered_data[date_column], format='%d.%m.%Y', errors='coerce')
+
+        # Фильтрация по дате
+        if start_date:
+            start_date = datetime.strptime(start_date, '%d.%m.%Y')
+            filtered_data = filtered_data[filtered_data[date_column] >= start_date]
+
+        if end_date:
+            end_date = datetime.strptime(end_date, '%d.%m.%Y')
+            filtered_data = filtered_data[filtered_data[date_column] <= end_date]
+
+        # Фильтрация по кварталам
+        if quarter:
+            filtered_data = filtered_data[filtered_data[date_column].dt.quarter == quarter]
+
+        # Фильтрация по полугодиям
+        if half_year:
+            if half_year == 1:
+                filtered_data = filtered_data[filtered_data[date_column].dt.month <= 6]
+            elif half_year == 2:
+                filtered_data = filtered_data[filtered_data[date_column].dt.month > 6]
+        if drop_date:
+            filtered_data = filtered_data.drop(drop_date, axis=1)
+
+        new_dataframe = filtered_data.copy()
+
+        # Переименование столбцов
+        if dict_to_rename is not None:
+            new_dataframe = new_dataframe.rename(columns=dict_to_rename)
+
+        # Сохранение в Excel, если требуется
+        if file_nam:
             with pd.ExcelWriter(file_nam, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
                 new_dataframe.to_excel(writer, sheet_name=sheet_nam, index=False)
 
-            return new_dataframe
-        else:
-            print(f"Столбец '{column_name}' не найден")
-            return None
+        return new_dataframe
+
 
     except Exception as e:
         print(f"Произошла ошибка: {e}")

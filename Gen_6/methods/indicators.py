@@ -1,16 +1,28 @@
-from ..service.dictator import *
-
-group = {'Г1': 4, 'Г2': 3, 'Г3': 2, 'Г4': 1}
-ignition_group = {'В1': 3, 'В2': 2, 'В3': 1}
-propogation_group = {'РП1': 4, 'РП2': 3, 'РП3': 2, 'РП4': 1}
-
-def group_compare(dict2, aim_ind, real_indicator, group_dict):
-    a_i = dict2[aim_ind]
+def group_compare(litera, aim_ind, real_indicator):
     try:
-        if group_dict[a_i] <= group_dict[real_indicator]:
-            p = 'Соответствует'
+        if litera in aim_ind:
+            if litera in real_indicator:
+                if aim_ind > real_indicator:
+                    p = 'Соответствует'
+                else:
+                    p = 'Не соответствует'
+            else:
+                p = f'Невозможно сравнить {real_indicator} c {aim_ind}'
         else:
-            p = 'Не соответствует'
+            p = 'Введенный показатель не соответствует указаной литере'
     except:
         p = 'н/у'
     return p
+
+def FindeWorsest(litera, comb_list):
+    l1 = []
+    for i in comb_list:
+        if litera in i:
+            l1.append(i)
+    if len(l1) == len(comb_list):
+        p = max(l1)
+    else:
+        p = 'Не может быть проведена оценка на основании представленного набора показателей'
+    return p
+
+print(FindeWorsest('Г', ['Г1', 'В2', 'Г1']))

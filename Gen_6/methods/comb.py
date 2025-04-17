@@ -85,8 +85,8 @@ def combustor(x, dict2=None):
 
 
             dict_3 = dict_3 | temp_dict3
-        except:
-            pass
+        except Exception as e:
+            print(f'здесь ошибка: {e}')
 
         if np.isnan(dict_3['temp_of_smog'][1]):
             g = ['tp1_smog', 'tp2_smog', 'tp3_smog', 'tp4_smog']
