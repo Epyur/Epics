@@ -43,8 +43,16 @@ def process_input_value(x, check_list):
                 if 0 in df_start['series_num'].values or 101 in df_start['series_num'].values:
                     pass
                 else:
-                    inc_id = int(df_start.loc[df_start['series_num'] == 1, 'task_teg'].iloc[0])
-                    df_start_2 = TakeDfFormExcel(sbd, 'ID', [inc_id])
+                    inc_id = df_start.loc[df_start['series_num'] == 1, 'task_teg'].iloc[0]
+                    try:
+                        inc_id1 = inc_id.split(',')
+                        inc_id_di = int(inc_id1[0])
+                    except:
+                        inc_id_di = int(inc_id)
+                    print(inc_id)
+                    # if
+                    df_start_2 = TakeDfFormExcel(sbd, 'ID', [inc_id_di])
+
                     df_start_2.at[0, 'ID'] = int(x)
                     df_start = pd.concat([df_start_2, df_start], ignore_index=True)
 

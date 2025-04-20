@@ -49,3 +49,5 @@ Gen_8/service/tg.py
 Gen_8/service/email.py
 /Gen_7/dist
 *.exe
+/expp
+/expp

@@ -1,40 +1,51 @@
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
+import requests
+import json
 
-# Настройки для Яндекс.Почты
-smtp_server = 'smtp.yandex.ru'
-smtp_port = 465  # Для SSL-подключения
 
-# Данные для авторизации
-email = 'lpitn@ya.ru'
-password = 'zrhuyzsfvvvkztlf'
+# Функция для получения списка задач
+def get_issues(queue_name, token):
+    # URL API трекера
+    url = 'https://api.tracker.yandex.net/v2/issues/'
 
-# Создаем сообщение
-msg = MIMEMultipart()
-msg['From'] = email
-msg['To'] = 'epyur@ya.ru'  # Адрес получателя
-msg['Subject'] = 'Тема письма'
+    # Заголовки запроса
+    headers = {
+        'Authorization': f'OAuth {token}',
+        'Content-Type': 'application/json'
+    }
 
-# Текст письма
-msg.attach(MIMEText('Текст вашего сообщения', 'plain'))
+    # Параметры запроса
+    params = {
+        'fields': 'id,summary,queue,creator,created,updated',  # Поля для получения
+        'query': f'queue:{queue_name}'  # Запрос для получения задач из конкретной очереди
+    }
 
-# Добавляем вложение
-file_path = r'C:\Users\epyur\PycharmProjects\PythonProject\Gen_8\out\91\91v.docx'
-with open(file_path, 'rb') as file:
-    part = MIMEBase('application', 'octet-stream')
-    part.set_payload(file.read())
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', f"attachment; filename={file_path}")
-    msg.attach(part)
+    try:
+        # Отправляем GET-запрос
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()  # Проверяем статус ответа
 
-# Отправляем письмо
-try:
-    with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
-        server.login(email, password)
-        server.send_message(msg)
-        print("Письмо успешно отправлено!")
-except Exception as e:
-    print(f"Ошибка при отправке письма: {str(e)}")
+        # Парсим ответ
+        issues = response.json()
+
+        # Выводим информацию о задачах
+        for issue in issues['issues']:
+            print(f"ID: {issue['id']}")
+            print(f"Заголовок: {issue['summary']}")
+            print(f"Очередь: {issue['queue']['name']}")
+            print(f"Создатель: {issue['creator']['display_name']}")
+            print(f"Создана: {issue['created']}")
+            print(f"Обновлено: {issue['updated']}")
+            print("-" * 40)
+
+        return issues
+
+    except requests.exceptions.RequestException as e:
+        print(f"Ошибка при получении задач: {e}")
+        return None
+
+
+# Пример использования
+if __name__ == "__main__":
+    # Ваш токен доступа
+    oauth_token = 'y0__xCaje-jqveAAhiJ9jQgvvf7lhKujjEDXtPwa-QBNLzpPkwk1JgJTw'
+    get_issues('LPIZAYAVKINAPRO', oauth_token)

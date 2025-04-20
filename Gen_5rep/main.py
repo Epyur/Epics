@@ -11,7 +11,7 @@ except:
     pass
 
 
-root_directory = r'C:\Users\epyur\YandexDisk-polishchuk@tn.ru\Техническая служба\Пожарная безопасностность\ЛПИ\ПК ЛПИ\out'  # Укажите путь к корневой папке
+root_directory = r'C:\Users\epyur\YandexDisk-polishchuk@tn.ru\ПК ЛПИ\out'  # Укажите путь к корневой папке
 # путь к отчетному файлу
 
 rep_file = os.path.join(current_directory, 'rep', 'report.xlsx')

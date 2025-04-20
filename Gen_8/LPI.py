@@ -11,7 +11,7 @@ class ExampleApp(wx.Frame):
         self.initUI()
 
     def initUI(self):
-        self.title = 'Лаборатория пожарных испытаний ver.7'
+        self.title = 'Лаборатория пожарных испытаний ver.8&3/4'
         self.size = (450, 500)  # Увеличили высоту окна для размещения чекбоксов
         self.SetSize(*self.size)
         self.SetTitle('LPI TN')
