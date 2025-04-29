@@ -305,14 +305,12 @@ def process_input_value(x, check_list):
                         print(f'Ошибка 4.10: {(x, e)}')
 
                     try:
-                        index = comb_df_d.index[comb_df_d['series_num'] == 102][0]
-                        comb_group_to_messag = comb_df_d[index, 'gen_indicator']
                         ident = comb_df_d.at[0, 'idetnity']
                         matname = comb_df_d.at[0, 'product_name']
                         theme = f'{ident}|{matname} (LPIZAYAVKINAPRO-{x})'
                         email_text = (f'Настоящим сообщаем, что заявка на проведение испытаний материала {matname} c '
-                                      f'идентификатором "{ident}" выполнена в отношении показателя "Группа воспламеняемости".\n'
-                                      f'Установленная группа горючести: {comb_group_to_messag}')
+                                      f'идентификатором "{ident}" выполнена в отношении показателя "Группа горючести".\n'
+                                      f'Установленная группа горючести: {max_i_c_g}')
                         file_path_to_email = os.path.abspath(os.path.join('.', 'out', str(x), str(x) + "g.docx"))
                         file_name = str(x) + "g.docx"
                         if 'a1' in ch_list:

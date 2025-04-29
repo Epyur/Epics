@@ -51,3 +51,8 @@ Gen_8/service/email.py
 *.exe
 /expp
 /expp
+/Gen_8/service/__pycache__
+/Gen_8/service/__pycache__
+/Gen_9/__pycache__
+/Gen_9/service/__pycache__
+*.txt
