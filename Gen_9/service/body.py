@@ -160,5 +160,3 @@ try:
             print(msg)
     else: pass
 except Exception as msg: print(msg)
-
-gost_30402_res.to_excel('f.xlsx')
