@@ -1,13 +1,19 @@
+import numpy as np
 import pandas as pd
 
-
 from Gen_9.service.rout_map import ns
+from Gen_9.service.tdt import TermoDataAnalyzer
 
 
-class GOST30244:
-    def __init__(self, data, smog_temp=ns[43], list_of_length_columns=None, length_of_distraction=ns[51],
-                 mass_before=ns[54], mass_after=ns[55], mass_loss=ns[56], combustion_time=ns[59], burning_drops=ns[62]):
-
+class GOST30244(TermoDataAnalyzer):
+    def __init__(self, data, smog_temp=ns[43], list_of_length_columns=None,
+                 length_of_distraction=ns[51],
+                 mass_before=ns[54],
+                 mass_after=ns[55],
+                 mass_loss=ns[56],
+                 combustion_time=ns[59],
+                 burning_drops=ns[62], *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
         if list_of_length_columns is None:
             list_of_length_columns = [ns[47], ns[48], ns[49], ns[50]]
         self.data = data
@@ -23,6 +29,7 @@ class GOST30244:
         self.burning_drops = burning_drops
         self.column_to_compare = None
         self.index = None
+
 
     def group_by_smog(self, index):
         self.index = index
@@ -142,7 +149,43 @@ class GOST30244:
         except Exception as msg:
             raise ValueError(f"Ошибка при сравнении столбцов: {str(msg)}")
 
-    def update_dataframe(self):
+    def update_dataframe(self, delta=900):
+        try:
+            for i in range(0, len(self.data)):
+                exp_date = self.data.at[i, ns[33]]
+                start_time = self.data.at[i, ns[34]]
+                self.delta = delta
+                ser_num = self.data.at[i, ns[34]]
+                out_num = self.data.at[i, ns[8]]
+                tdt_data = TermoDataAnalyzer(exp_date=exp_date, start_time=start_time, series_num=ser_num,
+                                             delta=delta, out_num=out_num)
+                results_list = tdt_data.analyze()
+                (tp1, time_1), (tp2, time_2), (tp3, time_3), (tp4, time_4), (tp_mean, mean_time) = results_list
+                self.data.at[i, ns[35]] = tp1
+                self.data.at[i, ns[37]] = tp2
+                self.data.at[i, ns[39]] = tp3
+                self.data.at[i, ns[41]] = tp4
+                self.data.at[i, ns[43]] = tp_mean
+                self.data.at[i, ns[36]] = time_1
+                self.data.at[i, ns[38]] = time_2
+                self.data.at[i, ns[40]] = time_3
+                self.data.at[i, ns[42]] = time_4
+                self.data.at[i, ns[44]] = mean_time
+
+        except: print('There are no any tdt files, or there has happened another error')
+
+        count = len(self.data)
+        column_lists = list(self.data)
+        for item in column_lists:
+            count *= 1
+            if isinstance(self.data.at[0, item], str):
+                self.data.at[count, item] = self.data.at[0, item]
+                if 'Да' in self.data[ns[62]].values:
+                    self.data.at[count, ns[62]] = 'Да'
+            else:
+                self.data.at[count, item] = self.data[item].mean()
+                self.data.at[count, ns[9]] = 102
+                self.data.at[count, ns[7]] = np.nan
         try:
             for i in [44, 51, 52, 56, 57, 60, 63, 65, 45, 53, 58, 61, 64, 66]:
                 self.data[ns[i]] = self.data[ns[i]].astype(str)

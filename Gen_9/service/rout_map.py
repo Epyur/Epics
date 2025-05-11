@@ -8,6 +8,11 @@ sbd = os.path.abspath(os.path.join('.', 'db', 'sbd.xls')) # файл сводн�
 ekn_book = os.path.abspath(os.path.join('.', 'db', 'EKN.xlsx')) # книга ЕКН
 out_names = os.path.abspath(os.path.join('.', 'db', 'out_names.xlsx'))
 cus_book = os.path.abspath(os.path.join('.', 'db', 'custiomer.xls'))
+inc_book = os.path.abspath(os.path.join('.', 'db', 'inc.xlsx'))
+exp_book = os.path.abspath(os.path.join('.', 'db', 'exp.xlsx'))
+
+alltasks = os.path.abspath(os.path.join('.', 'db', 'alltasks.xlsx'))
+closedtasks = os.path.abspath(os.path.join('.', 'db', 'closedtasks.xlsx'))
 
 # файлы шаблонов отчетов
 doc_templ = os.path.abspath(os.path.join('.', 'db', 'g_short.docx'))
@@ -17,7 +22,10 @@ doc_templ_v = os.path.abspath(os.path.join('.', 'db', 'v_short.docx'))
 # файлы термодата
 def TdtFile(file_date):
     tdt = os.path.abspath(os.path.join('.', 'tdt', f'{file_date} 00_00.tdt'))
+
     return tdt
+
+tdt_path = os.path.abspath(os.path.join('.', 'tdt'))
 
 
 

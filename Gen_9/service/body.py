@@ -88,24 +88,13 @@ try:
         # now we will create new row in df and fill it with basic info
         try:
             gost_30244_res = gost_30244_res.set_index(ns[0]).reset_index(drop=True, level=0)
-            count = len(gost_30244_res)
-            for item in column_list:
-                count *= 1
-                if isinstance(gost_30244_res.at[0, item], str):
-                    gost_30244_res.at[count, item] = gost_30244_res.at[0, item]
-                    if 'Да' in gost_30244_res[ns[62]].values:
-                        gost_30244_res.at[count, ns[62]] = 'Да'
-                else:
-                    gost_30244_res.at[count, item] = gost_30244_res[item].mean()
-                    gost_30244_res.at[count, ns[9]] = 102
-                    gost_30244_res.at[count, ns[7]] = np.nan
-
         except: pass
  # there are we fill in rest cells by GOST
         try:
             gost_30244_est = GOST30244(gost_30244_res)
+
             gost_30244_res = gost_30244_est.update_dataframe()
-        except: print('Error is here')
+        except Exception as msg: print(f'30244 dataframe problems: {msg}')
 
         try:
             frame_30244_to_save = FrameOfData(data=gost_30244_res, source_of_titles=title_data).rename_df(key='val', val='val2')

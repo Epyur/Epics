@@ -6,6 +6,7 @@ import pandas as pd
 from numpy import empty
 
 from .email import email
+from .getmail import GetMail
 from .saver import *
 from .def_lib import *
 from .tdt import *
@@ -180,8 +181,15 @@ def process_input_value(x, check_list):
                         print('Дублирующие записи отсутствуют (горючесть)')                    
                     comb_df = SpreadAndFill(comb_df, list_to_fill_amb)
                     comb_df_list = [comb_df.iloc[i:i+1].reset_index(drop=True, level=0) for i in range(len(comb_df))]
+                    print(comb_df_list)
                     comb_df_list_2 = []
                     # print(comb_df)
+                    try:
+                        mail_client = GetMail(folder='Comb', search='UNSEEN')
+                        # Получение и обработка писем
+                        messages = mail_client.process_messages()
+                    except:
+                        pass
                     try:
                         try:
                             for exp_frame in comb_df_list:
@@ -299,6 +307,7 @@ def process_input_value(x, check_list):
 
                         # for floa in float_list:
                         #     comb_df_d[floa] = comb_df_d[floa].astype('float')
+                        print(comb_df_d.at[0, 'photo_before'])
                         report_to_word(comb_df_d, doc_templ, x, 'g')
 
                     except Exception as e:

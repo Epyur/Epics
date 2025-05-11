@@ -5,9 +5,9 @@ from pptx.util import Pt
 from pptx.dml.color import RGBColor
 from func import *
 
-start_date = '01.01.2025'
-end_date = '31.03.2025'
-period_name = 'I квартал'
+start_date = '01.04.2025'
+end_date = '30.04.2025'
+period_name = 'Апрель 2025 г.'
 
 front_page_pic_rout = r'pics\title.png'
 part1_title_pic_rout = r'pics\part1.png'

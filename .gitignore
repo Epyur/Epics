@@ -57,3 +57,8 @@ Gen_8/service/email.py
 /Gen_9/service/__pycache__
 *.txt
 Gen_9/mail.py
+/Gen_9/service/tests
+/Gen_9/service/tests
+/Gen_9/tdt
+/Gen_9/service/passw
+/Gen_8/db
