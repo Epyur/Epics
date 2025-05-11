@@ -1,38 +1,61 @@
 import os
-
+import sys
+from pathlib import Path
 import pandas as pd
 
-directory_path = os.path.dirname(os.path.abspath(__file__))
-in_title = os.path.abspath(os.path.join('.', 'db', 'in_title.xlsx')) # файл входящих заявок
-sbd = os.path.abspath(os.path.join('.', 'db', 'sbd.xls')) # файл сводной базы данных
-ekn_book = os.path.abspath(os.path.join('.', 'db', 'EKN.xlsx')) # книга ЕКН
-out_names = os.path.abspath(os.path.join('.', 'db', 'out_names.xlsx'))
-cus_book = os.path.abspath(os.path.join('.', 'db', 'custiomer.xls'))
-inc_book = os.path.abspath(os.path.join('.', 'db', 'inc.xlsx'))
-exp_book = os.path.abspath(os.path.join('.', 'db', 'exp.xlsx'))
 
-alltasks = os.path.abspath(os.path.join('.', 'db', 'alltasks.xlsx'))
-closedtasks = os.path.abspath(os.path.join('.', 'db', 'closedtasks.xlsx'))
+def get_base_dir():
+    """Определяет базовую директорию с учётом структуры Gen_9 = dist"""
+    if getattr(sys, 'frozen', False):
+        # Режим EXE: файлы в подпапках Gen_9/db внутри распакованного EXE
+        return Path(sys.executable).parent
+    else:
+        # Режим разработки: корень проекта (где Gen_9/db)
+        return Path(__file__).parent.parent  # Поднимаемся на уровень выше до Gen_9
 
-# файлы шаблонов отчетов
-doc_templ = os.path.abspath(os.path.join('.', 'db', 'g_short.docx'))
-doc_templ_fg = os.path.abspath(os.path.join('.', 'db', 'g_full.docx'))
-doc_templ_v = os.path.abspath(os.path.join('.', 'db', 'v_short.docx'))
 
-# файлы термодата
+def get_db_path(filename):
+    """Возвращает путь к файлу в db с проверкой существования"""
+    path = get_base_dir() / "db" / filename
+    if not path.exists():
+        raise FileNotFoundError(f"Файл не найден: {path}")
+    return str(path)
+
+
+# Инициализация путей
+try:
+    in_title = get_db_path("in_title.xlsx")
+    sbd = get_db_path("sbd.xls")
+    ekn_book = get_db_path("EKN.xlsx")
+    out_names = get_db_path("out_names.xlsx")
+    cus_book = get_db_path("custiomer.xls")
+    inc_book = get_db_path("inc.xlsx")
+    exp_book = get_db_path("exp.xlsx")
+    alltasks = get_db_path("alltasks.xlsx")
+    closedtasks = get_db_path("closedtasks.xlsx")
+
+    # Шаблоны
+    doc_templ = get_db_path("g_short.docx")
+    doc_templ_fg = get_db_path("g_full.docx")
+    doc_templ_v = get_db_path("v_short.docx")
+
+except FileNotFoundError as e:
+    print(f"Ошибка инициализации путей: {e}")
+    sys.exit(1)
+
+
+# TDT-файлы
 def TdtFile(file_date):
-    tdt = os.path.abspath(os.path.join('.', 'tdt', f'{file_date} 00_00.tdt'))
-
-    return tdt
-
-tdt_path = os.path.abspath(os.path.join('.', 'tdt'))
+    path = get_base_dir() / "tdt" / f"{file_date} 00_00.tdt"
+    return str(path)
 
 
+tdt_path = str(get_base_dir() / "tdt")
 
-
-
-book_bible = {in_title: 'IncomingTitle', sbd: 'UnitedBaseOfDatas', ekn_book: 'ProductInfo',
-              cus_book: 'Customers', out_names: 'OutTitles'}
-name_space_df = pd.read_excel(in_title)
-ns = name_space_df.set_index('col_num')['val'].to_dict()
-print(ns)
+# Загрузка пространства имён
+try:
+    name_space_df = pd.read_excel(in_title)
+    ns = name_space_df.set_index('col_num')['val'].to_dict()
+except Exception as e:
+    print(f"Ошибка загрузки пространства имён: {e}")
+    ns = {}
