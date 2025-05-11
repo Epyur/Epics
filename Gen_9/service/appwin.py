@@ -546,10 +546,24 @@ class Ui_LPIApp(Ui_LPIApp):
 
     def update_close_button_state(self):
         """Обновляет состояние кнопки закрытия заявки"""
+        if not hasattr(self, 'current_row_index') or self.current_row_index is None:
+            self.closeRequestButton.setEnabled(False)
+            return
+
         try:
-            # Кнопка активна, если есть выбранная заявка и она загружена
-            is_enabled = hasattr(self, 'current_row_index') and self.current_row_index is not None
-            self.closeRequestButton.setEnabled(is_enabled)
+            current_id = self.df.at[self.current_row_index, ns[8]]
+            # Проверяем, есть ли заявка в closedtasks
+            in_closedtasks = current_id in self.original_df2[ns[8]].values
+
+            # Кнопка активна только если заявки нет в closedtasks
+            self.closeRequestButton.setEnabled(not in_closedtasks)
+
+            # Можно добавить всплывающую подсказку
+            if in_closedtasks:
+                self.closeRequestButton.setToolTip("Заявка уже закрыта (присутствует в closedtasks)")
+            else:
+                self.closeRequestButton.setToolTip("")
+
         except Exception as e:
             print(f"Ошибка обновления состояния кнопки: {e}")
             self.closeRequestButton.setEnabled(False)
@@ -789,6 +803,16 @@ class Ui_LPIApp(Ui_LPIApp):
         if not hasattr(self, 'current_row_index') or self.current_row_index is None:
             QMessageBox.warning(self.LPIApp, "Ошибка", "Не выбрана заявка для закрытия")
             return
+
+        try:
+            current_id = self.df.at[self.current_row_index, ns[8]]
+
+            # Проверяем, что заявки нет в closedtasks
+            if current_id in self.original_df2[ns[8]].values:
+                QMessageBox.warning(self.LPIApp, "Ошибка", "Эта заявка уже закрыта")
+                self.update_close_button_state()  # Обновляем состояние кнопки
+                return
+        except: pass
 
         try:
             row = self.df.iloc[self.current_row_index]
