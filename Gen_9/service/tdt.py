@@ -1,6 +1,8 @@
 import re
 import csv
 import os
+
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -65,6 +67,8 @@ class TermoDataAnalyzer:
     def process_temperature_data(self):
         """Обрабатывает температурные данные"""
         columns_to_convert = ['Термопара 1', 'Термопара 2', 'Термопара 3', 'Термопара 4']
+        for i in columns_to_convert:
+            self.df_tdt[i] = self.df_tdt[i].replace('X', np.nan, regex=True)
         self.df_tdt[columns_to_convert] = self.df_tdt[columns_to_convert].apply(
             lambda x: x.str.replace(',', '.').astype(float)
         )

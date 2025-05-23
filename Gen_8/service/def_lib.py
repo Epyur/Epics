@@ -28,34 +28,36 @@ def excel_column_to_dataframe_headers(excel_file, sheet_name, column_index):
 
 def TakeDfFormExcel(file_nam,
                     filtre_column=None,
-                    searched_index = None, ):
+                    searched_index = None):
     try:
         df_start = pd.read_excel(file_nam)
         d_f = df_start.reset_index()
 
         if filtre_column:
             filtered_df = d_f[d_f[filtre_column].isin(searched_index)]
+
         else:
             return print('Номер не найден')
     except Exception as e:
         print(f'Ошибка:{e}')
         filtered_df = filtered_df.reset_index(drop=True)
 
-    df_rename = DictTitlesRename(filtered_df, in_title, 'key', 'val')
+    # df_rename = DictTitlesRename(filtered_df, in_title, 'key', 'val')
+    df_rename = filtered_df.copy()
     df_new = excel_column_to_dataframe_headers(in_title, 'Sheet1', 1)
 
 
     # Устанавливаем ключи
-    target_df = df_new.set_index('index')
+    target_df = df_new.set_index(ns[0])
     original_columns = target_df.columns
-    source_df = df_rename.set_index('index')
+    source_df = df_rename.set_index(ns[0])
 
     # Заполнение пропущенных значений
     filled_df = target_df.combine_first(source_df)
 
 
     filled_df = filled_df[original_columns]
-    filled_df = filled_df.sort_values(by='inc_ID', ascending=True)
+    filled_df = filled_df.sort_values(by=ns[7], ascending=True)
     filled_df = filled_df.reset_index(drop=True, level=0)
     return filled_df
 
@@ -100,7 +102,7 @@ def DfFiller(bd,
 # разделить строку (для экспериментов без заявок)
 def split_row(df, columns_to_move, columns_to_remove, columns_to_drop):
     # ищем строку
-    target_row = df[df['series_num'] == 101]
+    target_row = df[df[ns[9]] == 101]
     if not target_row.empty:
         # Получаем индекс найденной строки
         target_index = target_row.index[0]
@@ -112,8 +114,8 @@ def split_row(df, columns_to_move, columns_to_remove, columns_to_drop):
     for col in columns_to_move:
         new_row[col] = df.at[target_index, col]
 
-    df.at[target_index, 'series_num'] = 1  # или другое значение по умолчанию
-    new_row['series_num'] = 0
+    df.at[target_index, ns[9]] = 1  # или другое значение по умолчанию
+    new_row[ns[9]] = 0
 
     # print(new_index)
     new_row_tr = new_row.reset_index()
@@ -128,7 +130,7 @@ def split_row(df, columns_to_move, columns_to_remove, columns_to_drop):
     # Добавляем новую строку в конец датафрейма
     df_f = pd.concat([df, new_row_tr], ignore_index=True)
     df_f = df_f[original_column]
-    df_f = df_f.sort_values(by='series_num', ascending=True).reset_index(drop=True, level=0)
+    df_f = df_f.sort_values(by=ns[9], ascending=True).reset_index(drop=True, level=0)
     for col in columns_to_remove:
         df_f.at[0, col] = None
 

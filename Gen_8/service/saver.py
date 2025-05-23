@@ -24,7 +24,7 @@ def report_to_word(df, templ, out_num, ind):
     :return: Путь к сохраненному файлу
     """
     # Создаем базовый контекст из данных DataFrame
-    suffix_column = 'series_num'
+    suffix_column = ns[9]
     dict1 = {
         f'{col}_{int(row[suffix_column])}': row[col]
         for col in df.columns
@@ -42,8 +42,8 @@ def report_to_word(df, templ, out_num, ind):
     for i in range(len(df)):
         # Обработка фото "до испытания"
         try:
-            if i < len(before_tags) and 'photo_before' in df.columns:
-                photo_path = df.at[i, 'photo_before']
+            if i < len(before_tags) and ns[70] in df.columns:
+                photo_path = df.at[i, ns[70]]
                 relative_path_1c = PhotoFinder(photo_path)
                 if pd.notna(relative_path_1c) and os.path.exists(relative_path_1c):
                     img = InlineImage(doc, relative_path_1c, width=Mm(80))
@@ -53,8 +53,8 @@ def report_to_word(df, templ, out_num, ind):
 
         # Обработка фото "после испытания"
         try:
-            if i < len(after_tags) and 'photo_after' in df.columns:
-                photo_path = df.at[i, 'photo_after']
+            if i < len(after_tags) and ns[71] in df.columns:
+                photo_path = df.at[i, ns[71]]
                 relative_path_2c = PhotoFinder(photo_path)
                 if pd.notna(relative_path_2c) and os.path.exists(relative_path_2c):
                     img = InlineImage(doc, relative_path_2c, width=Mm(80))
@@ -64,11 +64,11 @@ def report_to_word(df, templ, out_num, ind):
 
         # Обработка графиков
         try:
-            if i < len(graph_tags) and 'series_num' in df.columns:
-                ser_num = df.at[i, 'series_num']
+            if i < len(graph_tags) and ns[9] in df.columns:
+                ser_num = df.at[i, ns[9]]
                 graph_path = os.path.abspath(os.path.join(
                     '.', 'out', str(out_num),
-                    f'{out_num}_{ser_num}.jpg'
+                    f'{out_num}_{int(ser_num)}.jpg'
                 ))
 
                 if os.path.exists(graph_path):

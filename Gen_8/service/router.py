@@ -21,13 +21,22 @@ def process_input_value(x, check_list):
     counter_x = 0
     counter_x += 1
     message = []
+    try:
+        folder_list = ['Comb', 'Flam']
+        for i in folder_list:
+            mail_client = GetMail(folder=i, search='UNSEEN')
+            # Получение и обработка писем
+            messages = mail_client.process_messages()
+            mail_client.save_to_excel(sbd)
+    except:
+        pass
 
     if x == 0:
         message.append("До свидания!")
         exit()
     else:
         try:
-            df_start = TakeDfFormExcel(sbd, '№ заявки', [x])
+            df_start = TakeDfFormExcel(sbd, ns[8], [x])
             # Создаем первый датафрейм заявки
             try:
                 all_column_index = df_start.columns
@@ -41,20 +50,20 @@ def process_input_value(x, check_list):
 
                 # Проверяем, наличие строки записи заявки
 
-                if 0 in df_start['series_num'].values or 101 in df_start['series_num'].values:
+                if 0 in df_start[ns[9]].values or 101 in df_start[ns[9]].values:
                     pass
                 else:
-                    inc_id = df_start.loc[df_start['series_num'] == 1, 'task_teg'].iloc[0]
+                    inc_id = df_start.loc[df_start[ns[9]] == 1, ns[5]].iloc[0]
                     try:
                         inc_id1 = inc_id.split(',')
                         inc_id_di = int(inc_id1[0])
                     except:
                         inc_id_di = int(inc_id)
-                    print(inc_id)
-                    # if
-                    df_start_2 = TakeDfFormExcel(sbd, 'ID', [inc_id_di])
 
-                    df_start_2.at[0, 'ID'] = int(x)
+                    # if
+                    df_start_2 = TakeDfFormExcel(sbd, ns[7], [inc_id_di])
+
+                    df_start_2.at[0, ns[8]] = int(x)
                     df_start = pd.concat([df_start_2, df_start], ignore_index=True)
 
 
@@ -71,26 +80,21 @@ def process_input_value(x, check_list):
             for col in df_start.columns:
                 if df_start[col].isna().any():
                     df_start[col] = df_start[col].astype('object')
-            date_columns = ['date_of_end', 'sampels_in_date', 'exp_date',
-                            'flam_date_material_in', 'flam_exp_date']
+            date_columns = [ns[4], ns[32], ns[33], ns[76], ns[77]]
             df_start = convert_date_format(df_start, date_columns)
 
             # проверяем, есть ли в ДФ испытания без заявки, если да, то выделяем строку заявки и строку испытания. Если нет,
             # то идем дальше
             try:
-                if 101 in df_start['series_num'].values:
+                if 101 in df_start[ns[9]].values:
                     column_list = all_column_index.tolist()
                     print(column_list)
-                    old_row_remove = ['amb_temp',	'amb_pres',	'amb_moist', 'report_date',	'inventor',	'sampels_in_date',	'exp_date',
-                                   'tp1_smog',	'time_of_tp1',	'tp2_smog',	'time_of_tp2',	'tp3_smog',	'time_of_tp3', 'tp4_smog',
-                                   'time_of_tp4', 'temp_of_smog', 'temp_of_smog_group',	'temp_of_smog_compare',	'time_of_max_temp',
-                                   'mean_len_exp',	'mean_len_group', 'mean_len_compare', 'mass_before', 'mass_after', 'mass_loss',
-                                   'mass_loss_group', 'mass_loss_group_compare', 'combustion_time',	'burning_drops', 'substrate',
-                                   'mounting_method', 'start_time',	'photo_before',	'photo_after', 'additional_inf', 'link_to_file',
-                                   'flam_rep_date',	'flam_inventor', 'flam_date_material_in', 'flam_exp_date',	'flam_report',
-                                   'flam_subst', 'flam_fixation', 'flam_flow_density', 'flam_ignition', 'flam_time',
-                                   'flam_additional_inf']
-                    new_row_remove = ['place', 'budget', 'expense_item', 'matching_agent', 'matching_agent_mail']
+                    old_row_remove = [ns[27], ns[28], ns[29], ns[30], ns[31], ns[32], ns[33],
+                                   ns[35], ns[36], ns[37], ns[38], ns[39], ns[40], ns[41], ns[42], ns[43], ns[44], ns[45], ns[46],
+                                   ns[51], ns[52], ns[53], ns[54], ns[55], ns[56], ns[57], ns[58], ns[59], ns[62], ns[67],
+                                   ns[68], ns[69], ns[70], ns[71], ns[72], ns[73], ns[74], ns[75], ns[76], ns[77], ns[78],
+                                   ns[79], ns[80], ns[81], ns[82], ns[83], ns[86]]
+                    new_row_remove = [ns[12], ns[89], ns[90], ns[91], ns[92]]
                     df_gen = split_row(df_start, column_list, old_row_remove, new_row_remove)
 
                 else:
@@ -103,22 +107,20 @@ def process_input_value(x, check_list):
             # print(df_star)
             # проверяем ЕКН и информацию по материалу
             try:
-                print(df_gen.at[0, 'ekn'])
-                if math.isnan(df_gen.at[0, 'ekn']):
-                    mat_name = df_gen.at[0, 'product_name']
-                    mat_name_list = mat_name.split(',')
-                    # print(mat_name)
-                    ekn = int(mat_name_list[-1])
-                    # print(ekn)
-                    df_gen.at[0, 'ekn'] = ekn
-                else:
-                    ekn = int(df_gen.loc[df_gen['series_num'] == 0, 'ekn'].iloc[0])
+                print(df_gen.at[0, ns[14]])
+                try:
+                    if math.isnan(df_gen.at[0, ns[15]]):
+                        mat_name = df_gen.at[0, ns[14]]
+                        mat_name_list = mat_name.split(',')# print(mat_name)
+                        ekn = int(mat_name_list[-1])
+                        # print(ekn)
+                        df_gen.at[0, ns[14]] = ekn
+                except:
+                    ekn = int(df_gen.loc[df_gen[ns[9]] == 0, ns[14]].iloc[0])
+
                 # print(ekn)
-                ekn_column_list = ['product_name', 'color', 'sto', 'short_discr',
-                                   'producer', 'thickness', 'comb_indicator', 'flam_indicator',
-                                   'prop_indicator']
-                df_plus_ekn = DfFiller(ekn_book, df_gen, 'ekn', ekn,
-                                       'series_num', 0, ekn_column_list, x)
+                ekn_column_list = [ns[15], ns[16], ns[17], ns[18], ns[19], ns[22], ns[23], ns[24], ns[25]]
+                df_plus_ekn = DfFiller(ekn_book, df_gen, ns[14], ekn, ns[9], 0, ekn_column_list, x)
                 df_gen = df_plus_ekn
 
             except Exception as e:
@@ -127,10 +129,10 @@ def process_input_value(x, check_list):
 
             # собираем информацию о заказчике
             try:
-                cust_column_list = ['company_name',	'requesits', 'name_of_cust', 'tel', 'sbe', 'ind']
-                cust_mail = df_gen.loc[df_gen['series_num'] == 0, 'cust_mail'].iloc[0]
-                df_plus_ekn_cust = DfFiller(cus_book, df_gen, 'cust_mail', cust_mail,
-                                       'series_num', 0, cust_column_list, x)
+                cust_column_list = [ns[93],	ns[94], ns[11], ns[95], ns[96], ns[97]]
+                cust_mail = df_gen.loc[df_gen[ns[9]] == 0, ns[10]].iloc[0]
+                df_plus_ekn_cust = DfFiller(cus_book, df_gen, ns[10], cust_mail,
+                                       ns[9], 0, cust_column_list, x)
                 df_gen = df_plus_ekn_cust
 
             except Exception as e:
@@ -141,59 +143,53 @@ def process_input_value(x, check_list):
 
             # print(df_inc)
             try:
-                columns_to_fill = ['ekn', 'product_name', 'color', 'sto', 'short_discr',
-                                   'producer', 'thickness', 'comb_indicator', 'flam_indicator',
-                                   'prop_indicator', 'idetnity', 'cust_mail', 'name_of_cust', 'date_in',
-                                   'requesits', 'tel', 'sbe', 'company_name', 'ind']
+                columns_to_fill = [ns[14], ns[15], ns[16], ns[17], ns[18], ns[19], ns[22], ns[23], ns[24],
+                                   ns[25], ns[13], ns[10], ns[11], ns[3], ns[94], ns[95], ns[96], ns[93], ns[97]]
                 df_gen = SpreadAndFill(df_gen, columns_to_fill)
                 try:
-                    df_gen['ekn'] = df_gen['ekn'].astype('int')
+                    df_gen[ns[14]] = df_gen[ns[14]].astype('int')
                 except:
                     pass
                 try:
-                    df_gen['ID'] = df_gen['ID'].astype('int')
+                    df_gen[ns[8]] = df_gen[ns[8]].astype('int')
                 except:
                     pass
                 try:
-                    df_gen['inc_ID'] = df_gen['inc_ID'].astype('int')
+                    df_gen[ns[7]] = df_gen[ns[7]].astype('int')
                 except:
                     pass
                 try:
-                    df_gen['series_num'] = df_gen['series_num'].astype('int')
+                    df_gen[ns[9]] = df_gen[ns[9]].astype('int')
                 except:
                     pass
             except:
                 pass
             # print(list(df_gen.columns))
             # print(df_gen)
-            list_to_fill_amb = ['place', 'amb_temp',	'amb_pres',	'amb_moist', 'inventor', 'sampels_in_date',	'substrate',
-                                'mounting_method','exp_date', 'flam_inventor', 
-                                'flam_date_material_in', 'flam_exp_date', 'flam_report', 'flam_subst', 'flam_fixation']
-            fixated_column_list = ['inc_ID', 'ID', 'series_num', 'report_date', 'flam_rep_date']
+            list_to_fill_amb = [ns[12], ns[27], ns[28], ns[29], ns[31], ns[32], ns[67],
+                                ns[68], ns[33], ns[75], ns[76], ns[77], ns[78], ns[79], ns[80]]
+            fixated_column_list = [ns[7], ns[8], ns[9], ns[30], ns[74]]
             try:
-
-                if not df_gen['mass_before'].isna().all():
-                    comb_df = df_gen[df_gen['mass_before'].notna()]
+                print('we are go in ')
+                if not df_gen[ns[54]].isna().all():
+                    print('tre there')
+                    comb_df = df_gen[df_gen[ns[54]].notna()]
                     comb_df = comb_df.reset_index(drop=True, level=0)
                     try:
-                        comb_df = merge_duplicate_rows(comb_df, ['series_num'], fixated_column_list)
+                        comb_df = merge_duplicate_rows(comb_df, [ns[9]], fixated_column_list)
                     except:
-                        print('Дублирующие записи отсутствуют (горючесть)')                    
+                        print('Дублирующие записи отсутствуют (горючесть)')
+                    print('we are go on')
                     comb_df = SpreadAndFill(comb_df, list_to_fill_amb)
                     comb_df_list = [comb_df.iloc[i:i+1].reset_index(drop=True, level=0) for i in range(len(comb_df))]
                     print(comb_df_list)
                     comb_df_list_2 = []
                     # print(comb_df)
-                    try:
-                        mail_client = GetMail(folder='Comb', search='UNSEEN')
-                        # Получение и обработка писем
-                        messages = mail_client.process_messages()
-                    except:
-                        pass
+
                     try:
                         try:
                             for exp_frame in comb_df_list:
-                                df_temp = dataframe_tdt(exp_frame, 900, x)
+                                df_temp = dataframe_tdt(exp_frame, 700, x)
                                 comb_df_list_2.append(df_temp)
 
                             comb_df = pd.concat(comb_df_list_2)
@@ -202,40 +198,41 @@ def process_input_value(x, check_list):
                         except Exception as e:
                             print(f'Ошибка 4.1, возможно нет файла термодата для обработки: {(x, e)}')
                             traceback.print_exc()
-                            if not comb_df['temp_of_smog'].isna().all():
+                            if not comb_df[ns[43]].isna().all():
                                 pass
                             else:
-                                comb_df = MeanValue(comb_df,  ['tp1_smog', 'tp2_smog', 'tp3_smog', 'tp4_smog'], 'temp_of_smog')
+                                comb_df = MeanValue(comb_df,  [ns[35], ns[37], ns[39], ns[41]], ns[43])
 
                     except Exception as e:
                         print(f'Ошибка 4.2: Хз, что здесь могло произойти, но вдруг ({(x, e)})')
                     try:
-                        comb_df = MeanValue(comb_df, ['Comb_lenth_1', 'Comb_lenth_2', 'Comb_lenth_3', 'Comb_lenth_4'], 'mean_len_exp')
+                        comb_df = MeanValue(comb_df, [ns[47], ns[48], ns[49], ns[50]], ns[51])
                     except Exception as e:
                         print(f'Ошибка 4.3: Проверьте значения повреждений по длине ({(x, e)})')
 
                     # рассчитываем потерю массы
                     try:
-                        comb_df['mass_loss'] = abs((comb_df['mass_after'] - comb_df['mass_before']) * 100 / comb_df['mass_before'])
-                        comb_df['mass_loss'] = comb_df['mass_loss'].round(2)
+                        comb_df[ns[56]] = abs((comb_df[ns[55]] - comb_df[ns[54]]) * 100 / comb_df[ns[54]])
+                        comb_df[ns[56]] = comb_df[ns[56]].round(2)
                     except Exception as e:
                         print(f'Ошибка 4.4: Проверьте значение введенных масс, особенно массы до эксперимента ({(x, e)})')
 
                     # we are making new dataframe for the sum row and fill it with basic data
                     try:
                         df_com_sum = pd.DataFrame(columns=all_column_index)
-                        df_com_sum.at[0, 'series_num'] = 102
-                        df_com_sum.at[0, 'aim_indicator'] = 'Группа горючести'
-                        df_com_sum.at[0, 'ID'] = x
-                        list_for_mean = ['temp_of_smog', 'mean_len_exp', 'mass_loss', 'combustion_time']
+                        df_com_sum.at[0, ns[9]] = 102
+                        df_com_sum.at[0, ns[1]] = 'Группа горючести'
+                        df_com_sum.at[0, ns[8]] = x
+                        list_for_mean = [ns[43], ns[51], ns[56], ns[59]]
                         for i_t in list_for_mean:
                             i_t_m = comb_df[i_t].mean().round(2)
                             df_com_sum.at[0, i_t] = i_t_m
-                        if 'Да' in comb_df['burning_drops'].values:
-                            df_com_sum.at[0, 'burning_drops'] = 'Да'
+                        if 'Да' in comb_df[ns[62]].values:
+                            df_com_sum.at[0, ns[62]] = 'Да'
                         else:
-                            df_com_sum.at[0, 'burning_drops'] = 'Нет'
-                        df_com_sum.at[0, 'ind'] = df_inc.at[0, 'ind']
+                            df_com_sum.at[0, ns[62]] = 'Нет'
+                        df_com_sum.at[0, ns[97]] = df_inc.at[0, ns[97]]
+
 
                     except Exception as e:
                         print(f'Ошибка 4.5: не получилось создать и заполнить новый фрейм для итоговых результатов испытаний '
@@ -244,48 +241,46 @@ def process_input_value(x, check_list):
                     # add new df to comb_df
                     try:
                         comb_df = pd.concat([comb_df, df_com_sum], ignore_index=True)
-                        # print(comb_df)
+                        print(comb_df)
                     except Exception as e:
                         print(f'Ошибка 4.6: Ошибка объединения фреймов ({(x, e)})')
 
                     # start to check a comb indicators and a matching
                     try:
-                        comb_indicator = comb_df.at[0, 'comb_indicator']
+                        comb_indicator = comb_df.at[0, ns[23]]
                         for i_t_v in range(0,len(comb_df)):
-                            i_t_v_g = comb_df.at[i_t_v, 'temp_of_smog']
-                            comb_df.at[i_t_v, 'temp_of_smog_group'] = smog_indicator(i_t_v_g)
-                            i_t_v_l = comb_df.at[i_t_v, 'mean_len_exp']
-                            comb_df.at[i_t_v, 'mean_len_group'] = length_indicator(i_t_v_l)
-                            i_t_v_m = comb_df.at[i_t_v, 'mass_loss']
-                            comb_df.at[i_t_v, 'mass_loss_group'] = mass_indicator(i_t_v_m)
-                            i_t_v_c = comb_df.at[i_t_v, 'combustion_time']
-                            comb_df.at[i_t_v, 'combustion_time_group'] = time_indicator(i_t_v_c)
-                            i_t_v_d = comb_df.at[i_t_v, 'burning_drops']
-                            comb_df.at[i_t_v, 'burning_drops_group'] = burning_drops_group(i_t_v_d)
+                            i_t_v_g = comb_df.at[i_t_v, ns[43]]
+                            comb_df.at[i_t_v, ns[44]] = smog_indicator(i_t_v_g)
+                            i_t_v_l = comb_df.at[i_t_v, ns[51]]
+                            comb_df.at[i_t_v, ns[52]] = length_indicator(i_t_v_l)
+                            i_t_v_m = comb_df.at[i_t_v, ns[56]]
+                            comb_df.at[i_t_v, ns[57]] = mass_indicator(i_t_v_m)
+                            i_t_v_c = comb_df.at[i_t_v, ns[59]]
+                            comb_df.at[i_t_v, ns[60]] = time_indicator(i_t_v_c)
+                            i_t_v_d = comb_df.at[i_t_v, ns[62]]
+                            comb_df.at[i_t_v, ns[63]] = burning_drops_group(i_t_v_d)
                     except:
                         print(f'Ошибка 4.7: {(x, e)}')
 
                     # собираем общую оценку
                     try:
-                        comb_indicator_list = ['temp_of_smog_group', 'mean_len_group', 'mass_loss_group', 'combustion_time_group',
-                                               'burning_drops_group']
+                        comb_indicator_list = [ns[44], ns[52], ns[57], ns[60],
+                                               ns[63]]
                         comb_indicator_l = []
                         for index_f in range(0,len(comb_df)):
                             for i_c in comb_indicator_list:
                                 i_c_g = comb_df.at[index_f, i_c]
                                 comb_indicator_l.append(i_c_g)
                             max_i_c_g = FindeWorsest('Г', comb_indicator_l)
-                            comb_df.at[index_f, 'gen_indicator'] = max_i_c_g
+                            comb_df.at[index_f, ns[65]] = max_i_c_g
                             comb_indicator_l = []
                     except Exception as e:
                         print(f'Ошибка 4.8: {(x, e)}')
 
                     # matching
                     try:
-                        match_list = ['temp_of_smog_group', 'mean_len_group', 'mass_loss_group', 'combustion_time_group',
-                                               'burning_drops_group', 'gen_indicator']
-                        match_list_aim = ['temp_of_smog_compare', 'mean_len_compare', 'mass_loss_group_compare',
-                                          'combustion_time_group_compare', 'burning_drops_group_compare', 'matching']
+                        match_list = [ns[44], ns[52], ns[57], ns[60], ns[63], ns[65]]
+                        match_list_aim = [ns[45], ns[53], ns[58], ns[61], ns[64], ns[66]]
                         for index_f in range(0,len(comb_df)):
                             for i_m in range(len(match_list)):
                                 i_m_m = match_list[i_m]
@@ -299,23 +294,22 @@ def process_input_value(x, check_list):
 
                     try:
                         comb_df_d = comb_df.copy()
-                        float_list = ['thickness', 'start_temp', 'tp1_smog',  'time_of_tp1', 'tp2_smog',  'time_of_tp2', 'tp3_smog',
-                                      'time_of_tp3', 'tp4_smog',  'time_of_tp4', 'temp_of_smog']
+                        float_list = [ns[22], ns[69], ns[35], ns[36], ns[37], ns[38], ns[39],	ns[40], ns[41], ns[42], ns[43]]
                         for it_d in range(0, len(comb_df_d)):
-                            it_d_v = round(float(comb_df_d.at[it_d, 'mass_loss']), 1)
-                            comb_df_d.at[it_d, 'mass_loss'] = it_d_v
+                            it_d_v = round(float(comb_df_d.at[it_d, ns[56]]), 1)
+                            comb_df_d.at[it_d, ns[56]] = it_d_v
 
                         # for floa in float_list:
                         #     comb_df_d[floa] = comb_df_d[floa].astype('float')
-                        print(comb_df_d.at[0, 'photo_before'])
+                        print(comb_df_d.at[0, ns[70]])
                         report_to_word(comb_df_d, doc_templ, x, 'g')
 
                     except Exception as e:
                         print(f'Ошибка 4.10: {(x, e)}')
 
                     try:
-                        ident = comb_df_d.at[0, 'idetnity']
-                        matname = comb_df_d.at[0, 'product_name']
+                        ident = comb_df_d.at[0, ns[13]]
+                        matname = comb_df_d.at[0, ns[15]]
                         theme = f'{ident}|{matname} (LPIZAYAVKINAPRO-{x})'
                         email_text = (f'Настоящим сообщаем, что заявка на проведение испытаний материала {matname} c '
                                       f'идентификатором "{ident}" выполнена в отношении показателя "Группа горючести".\n'
@@ -347,12 +341,12 @@ def process_input_value(x, check_list):
 
 
             # обрабатываем воспламеняемость
-            if not df_gen['flam_ignition'].isna().all():
-                flam_df = df_gen[df_gen['flam_ignition'].notna()]
+            if not df_gen[ns[82]].isna().all():
+                flam_df = df_gen[df_gen[ns[82]].notna()]
                 flam_df = flam_df.reset_index(drop=True, level=0)
                 # print(flam_df)
                 try:                    
-                    flam_df = merge_duplicate_rows(flam_df, ['series_num'], fixated_column_list)
+                    flam_df = merge_duplicate_rows(flam_df, [ns[9]], fixated_column_list)
                 except:
                     print('Дублирующие записи отсутствуют')
                 try:
@@ -366,32 +360,32 @@ def process_input_value(x, check_list):
 
                     try:
                         df_flam_sum = pd.DataFrame(columns=all_column_index)
-                        df_flam_sum.at[0, 'series_num'] = 103
-                        df_flam_sum.at[0, 'aim_indicator'] = 'Группа воспламеняемости'
-                        df_flam_sum.at[0, 'ID'] = x
-                        min_value_flam = df_gen.loc[df_gen['flam_ignition'] == 'Да', 'flam_flow_density'].min()
-                        df_flam_sum.at[0, 'flam_flow_density'] = min_value_flam
-                        df_flam_sum.at[0, 'ind'] = df_inc.at[0, 'ind']
+                        df_flam_sum.at[0, ns[9]] = 103
+                        df_flam_sum.at[0, ns[1]] = 'Группа воспламеняемости'
+                        df_flam_sum.at[0, ns[8]] = x
+                        min_value_flam = df_gen.loc[df_gen[ns[82]] == 'Да', ns[81]].min()
+                        df_flam_sum.at[0, ns[81]] = min_value_flam
+                        df_flam_sum.at[0, ns[97]] = df_inc.at[0, ns[97]]
                     except Exception as e:
                         print(f'Ошибка 5.1: {(x, e)}')
 
                     try:
-                        flam_indicator = df_gen.at[0, 'flam_indicator']
+                        flam_indicator = df_gen.at[0, ns[24]]
                         flam_indicator_real = ptp_indicator(min_value_flam)
-                        df_flam_sum.at[0, 'flam_group'] = flam_indicator_real
-                        df_flam_sum.at[0, 'flam_group_comprasion'] = group_compare('В', flam_indicator, flam_indicator_real)
+                        df_flam_sum.at[0, ns[84]] = flam_indicator_real
+                        df_flam_sum.at[0, ns[85]] = group_compare('В', flam_indicator, flam_indicator_real)
                     except Exception as e:
                         print(f'Ошибка 5.2: {(x, e)}')
 
                     df_flam = pd.concat([flam_df, df_flam_sum], ignore_index=True)
                     try:
                         flam_df_d = df_flam.copy()
-                        # flam_df_d['thickness'] = flam_df_d['thickness'].astype('float')
-                        flam_df_d['flam_flow_density'] = flam_df_d['flam_flow_density'].astype('int')
-                        int_list = ['flam_flow_density', 'flam_time']
+                        # flam_df_d[ns[22]] = flam_df_d[ns[22]].astype('float')
+                        flam_df_d[ns[81]] = flam_df_d[ns[81]].astype('int')
+                        int_list = [ns[81], ns[83]]
                         for i in range(0, len(flam_df_d)):
                             try:
-                                flam_df_d.at[i, 'flam_time'] = int(flam_df_d.at[i, 'flam_time'])
+                                flam_df_d.at[i, ns[83]] = int(flam_df_d.at[i, ns[83]])
                             except:
                                 pass
 
@@ -401,8 +395,8 @@ def process_input_value(x, check_list):
                         print(f'Ошибка 5.3: {(x, e)}')
 
                     try:
-                        ident = flam_df_d.at[0, 'idetnity']
-                        matname = flam_df_d.at[0, 'product_name']
+                        ident = flam_df_d.at[0, ns[13]]
+                        matname = flam_df_d.at[0, ns[15]]
                         theme = f'{ident}|{matname} (LPIZAYAVKINAPRO-{x})'
                         email_text = (f'Настоящим сообщаем, что заявка на проведение испытаний материала {matname} c '
                                       f'идентификатором "{ident}" выполнена в отношении показателя "Группа воспламеняемости".\n'

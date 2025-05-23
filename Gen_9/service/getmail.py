@@ -283,6 +283,10 @@ class GetMail:
                 else:
                     updated_df = df
 
+                # updated_df['ID'] = updated_df['ID'].str.extract(r'(\d+)')[0]
+                mask = updated_df['ID'].astype(str).str.contains("LPIZAYAVKINAPRO-", na=False)
+                updated_df.loc[mask, 'ID'] = updated_df.loc[mask, 'ID'].str.replace(r'LPIZAYAVKINAPRO-(\d+)', r'\1', regex=True)
+
                 updated_df.to_excel(file, index=False)
                 print(f"Данные успешно сохранены в {file}")
             else:
@@ -290,16 +294,30 @@ class GetMail:
         except Exception as e:
             print(f"Ошибка при сохранении в Excel: {str(e)}")
 
+    @property
+    def GetDf(self):
+        """
+        Сохранение данных в Excel файл
 
-# Пример использования
-if __name__ == "__main__":
-    mail_client = GetMail(folder='Comb', search='UNSEEN')
+        :param file: Путь к файлу Excel
+        """
+        if not self.messages:
+            print("Нет данных для сохранения")
+            return
 
-    # Получение и обработка писем
-    messages = mail_client.process_messages()
+        try:
+            # Создаем DataFrame из JSON данных
+            json_data = [msg['json'] for msg in self.messages if msg.get('json')]
+            print(json_data)
+            if json_data:
+                df = pd.DataFrame(json_data)
 
+                df['ID'] = df['ID'].str.extract(r'(\d+)')[0]
+                print("Таблица успешно сформирована")
+                return df
 
-    # Сохранение данных в Excel
-    mail_client.save_to_excel("output.xlsx")
+            else:
+                print("Нет JSON данных для сохранения")
+        except Exception as e:
+            print(f"Ошибка чтения информации: {str(e)}")
 
-    print(messages[0]['text'])

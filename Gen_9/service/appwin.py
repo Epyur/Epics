@@ -8,6 +8,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 from Gen_9.service.passw.passw import mail_login, mail_pass, tracker_adress
+from Gen_9.service.process import get_all
 from Gen_9.service.rout_map import ns, closedtasks, alltasks
 from Gen_9.service.sender import NotificationSender
 
@@ -190,6 +191,7 @@ class RequestView:
     def update_request_list(self, requests_df):
         """Обновление списка заявок"""
         self.ui.listWidget.clear()
+        get_all()
 
         if requests_df is None or requests_df.empty:
             return

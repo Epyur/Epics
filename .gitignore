@@ -62,3 +62,6 @@ Gen_9/mail.py
 /Gen_9/tdt
 /Gen_9/service/passw
 /Gen_8/db
+/Gen_9/_internal
+/Gen_9/build
+*.db

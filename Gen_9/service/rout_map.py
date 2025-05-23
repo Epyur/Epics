@@ -14,9 +14,9 @@ def get_base_dir():
         return Path(__file__).parent.parent  # Поднимаемся на уровень выше до Gen_9
 
 
-def get_db_path(filename):
+def get_db_path(filename, folder='db'):
     """Возвращает путь к файлу в db с проверкой существования"""
-    path = get_base_dir() / "db" / filename
+    path = get_base_dir() / folder / filename
     if not path.exists():
         raise FileNotFoundError(f"Файл не найден: {path}")
     return str(path)
@@ -25,7 +25,7 @@ def get_db_path(filename):
 # Инициализация путей
 try:
     in_title = get_db_path("in_title.xlsx")
-    sbd = get_db_path("sbd.xls")
+    sbd = get_db_path("sbd.xlsx")
     ekn_book = get_db_path("EKN.xlsx")
     out_names = get_db_path("out_names.xlsx")
     cus_book = get_db_path("custiomer.xls")
@@ -33,6 +33,8 @@ try:
     exp_book = get_db_path("exp.xlsx")
     alltasks = get_db_path("alltasks.xlsx")
     closedtasks = get_db_path("closedtasks.xlsx")
+    results_base = get_db_path("results.xlsx", 'out')
+
 
     # Шаблоны
     doc_templ = get_db_path("g_short.docx")

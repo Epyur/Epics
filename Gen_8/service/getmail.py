@@ -280,6 +280,11 @@ class GetMail:
                 else:
                     updated_df = df
 
+                # updated_df['ID'] = updated_df['ID'].str.extract(r'(\d+)')[0]
+                mask = updated_df['ID'].astype(str).str.contains("LPIZAYAVKINAPRO-", na=False)
+                updated_df.loc[mask, 'ID'] = updated_df.loc[mask, 'ID'].str.replace(r'LPIZAYAVKINAPRO-(\d+)', r'\1',
+                                                                                    regex=True)
+
                 updated_df.to_excel(file, index=False)
                 print(f"Данные успешно сохранены в {file}")
             else:
