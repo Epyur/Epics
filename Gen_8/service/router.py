@@ -16,7 +16,7 @@ from .indicators import *
 from .tg import tg_message
 
 
-def process_input_value(x, check_list):
+def process_input_value(x, check_list, chat_id, message_thread_id):
     ch_list = check_list
     counter_x = 0
     counter_x += 1
@@ -318,6 +318,9 @@ def process_input_value(x, check_list):
                         file_name = str(x) + "g.docx"
                         if 'a1' in ch_list:
                             email(theme, email_text, file_path_to_email, file_name, 'shoya.vs@tn.ru')
+                        if 'a6' in ch_list:
+                            tg_text = theme + '\n\n' + email_text
+                            tg_message(tg_text, topic_id=message_thread_id, file_path=file_path_to_email, chat_id=chat_id)
                         if 'a2' in ch_list:
                             tg_text = theme + '\n\n' + email_text
                             tg_message(tg_text, '10', file_path_to_email)
@@ -402,16 +405,19 @@ def process_input_value(x, check_list):
                                       f'идентификатором "{ident}" выполнена в отношении показателя "Группа воспламеняемости".\n'
                                       f'Установленная критическая плотность теплового потока (кВт/м\u00b2): {int(min_value_flam)}\n'
                                       f'Установленная группа воспламеняемости: {flam_indicator_real}')
-                        file_path_to_email = os.path.abspath(os.path.join('.', 'out', str(x), str(x) + "v"+".docx"))
+                        file_path_to_email_v = os.path.abspath(os.path.join('.', 'out', str(x), str(x) + "v"+".docx"))
                         file_name = str(x) + "v.docx"
                         if 'a4' in ch_list:
-                            email(theme, email_text, file_path_to_email, file_name, 'shoya.vs@tn.ru')
+                            email(theme, email_text, file_path_to_email_v, file_name, 'shoya.vs@tn.ru')
+                        if 'a7' in ch_list:
+                            tg_text = theme + '\n\n' + email_text
+                            tg_message(tg_text, topic_id=message_thread_id, file_path=file_path_to_email_v, chat_id=chat_id)
                         if 'a5' in ch_list:
                             tg_text = theme + '\n\n' + email_text
-                            tg_message(tg_text, '12', file_path_to_email)
+                            tg_message(tg_text, '12', file_path_to_email_v)
                         if 'a3' in ch_list:
                             email_text = email_text + '\n\n\n\n\n\n end point'
-                            email(theme, email_text, file_path_to_email, file_name, 'lpi@tracker.tn.ru')
+                            email(theme, email_text, file_path_to_email_v, file_name, 'lpi@tracker.tn.ru')
                     except Exception as e:
                         print(f'почта не отправлена: {e}')
                 except Exception as e:

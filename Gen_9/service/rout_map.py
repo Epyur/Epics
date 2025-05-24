@@ -34,6 +34,7 @@ try:
     alltasks = get_db_path("alltasks.xlsx")
     closedtasks = get_db_path("closedtasks.xlsx")
     results_base = get_db_path("results.xlsx", 'out')
+    tg_users = get_db_path("tguser.txt")
 
 
     # Шаблоны

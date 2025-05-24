@@ -11,6 +11,7 @@ cus_book = os.path.abspath(os.path.join('.', 'db', 'custiomer.xls'))
 alltascks = os.path.abspath(os.path.join('.', 'db', 'alltasks.xlsx'))
 closedtasks = os.path.abspath(os.path.join('.', 'db', 'closedtasks.xlsx'))
 calibration = os.path.abspath(os.path.join('.', 'db', 'calibration.xlsx'))
+tg_users = os.path.abspath(os.path.join('.', 'db', 'tgusers.txt'))
 
 # файлы шаблонов отчетов
 doc_templ = os.path.abspath(os.path.join('.', 'db', 'g_short.docx'))
