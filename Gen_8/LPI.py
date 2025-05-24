@@ -13,8 +13,10 @@ from telegram.ext import (
 )
 import queue
 from enum import Enum, auto
+import pandas as pd
+from tabulate import tabulate
 
-from service.rout_map import tg_users
+from service.rout_map import tg_users, alltascks, ns
 from service.tg import token_kod, test_token
 from service.router import process_input_value
 
@@ -45,7 +47,11 @@ class UserState(Enum):
 class ExampleApp(wx.Frame):
     def __init__(self, *args, **kwargs):
         super(ExampleApp, self).__init__(*args, **kwargs)
+        self.should_exit = False  # Добавьте этот флаг
         self.initUI()
+
+        # Загружаем DataFrame при инициализации
+        self.df = self.load_dataframe()
 
         # Запускаем Telegram бота в отдельном потоке
         self.telegram_thread = threading.Thread(
@@ -94,6 +100,88 @@ class ExampleApp(wx.Frame):
                                        style=wx.TE_MULTILINE | wx.TE_READONLY)
 
         self.Show()
+
+    def load_dataframe(self):
+        """Загружает DataFrame с данными для поиска"""
+        try:
+            # Для Excel файлов
+            df = pd.read_excel(alltascks)
+            # Или для CSV:
+            # df = pd.read_csv(alltascks, encoding='windows-1251', sep=';')
+            print(f"Успешно загружено {len(df)} записей")
+            return df
+        except Exception as e:
+            print(f"Ошибка при загрузке DataFrame: {e}")
+            # Возвращаем пустой DataFrame с ожидаемыми колонками
+            return pd.DataFrame(columns=['ID', 'identity'])
+
+    async def telegram_info(self, update: Update, context: CallbackContext):
+        """Обработчик команды /info с поиском, игнорирующим пробелы"""
+        if not await self.check_access(update, context):
+            return
+
+        if not context.args:
+            await update.message.reply_text("Использование: /info <идентификатор>\nПример: /info 8250")
+            return
+
+        try:
+            keyword = ' '.join(context.args)
+
+            # Удаляем все пробелы из поискового запроса
+            clean_keyword = keyword.replace(" ", "")
+
+            # Проверяем загрузку DataFrame
+            if self.df.empty:
+                await update.message.reply_text("База данных не загружена")
+                return
+
+            # Функция для сравнения значений с учетом удаления пробелов
+            def contains_ignoring_spaces(col):
+                return col.astype(str).str.replace(" ", "").str.contains(clean_keyword, case=False, na=False)
+
+            # Поиск в числовых колонках (если они есть)
+            result = pd.DataFrame()
+            if 'identity' in self.df.columns:
+                result = self.df[self.df['identity'].apply(
+                    lambda x: str(x).replace(" ", "") == clean_keyword if pd.notnull(x) else False)]
+
+            # Если в колонке identity не нашли, ищем во всех колонках
+            if result.empty:
+                mask = self.df.apply(lambda col: contains_ignoring_spaces(col))
+                result = self.df[mask.any(axis=1)]
+
+            if result.empty:
+                await update.message.reply_text(f"По запросу '{keyword}' ничего не найдено")
+                return
+
+            # Транспонируем DataFrame для инвертированного отображения
+            transposed = result.T.reset_index()
+            transposed.columns = ['Параметр'] + [f"Значение {i + 1}" for i in range(len(transposed.columns) - 1)]
+
+            # Форматируем таблицу
+            table = tabulate(transposed,
+                             headers='keys',
+                             tablefmt='psql',
+                             showindex=False,
+                             stralign='left',
+                             numalign='left')
+
+            # Отправляем результат
+            if len(table) <= 4000:
+                await update.message.reply_text(f"<pre>{table}</pre>", parse_mode='HTML')
+            else:
+                with open('search_results.txt', 'w', encoding='utf-8') as f:
+                    f.write(table)
+                await update.message.reply_document(
+                    document=open('search_results.txt', 'rb'),
+                    caption=f"Результаты поиска по '{keyword}'"
+                )
+
+        except Exception as e:
+            await update.message.reply_text(f"Произошла ошибка: {str(e)}")
+            print(f"Ошибка в telegram_info: {e}")
+            import traceback
+            traceback.print_exc()
 
     def onButtonClick(self, event):
         text_in = self.textCtrl.GetValue()
@@ -172,27 +260,34 @@ class ExampleApp(wx.Frame):
 
     def run_telegram_bot(self):
         """Запускает Telegram бота с использованием nest_asyncio"""
-        import nest_asyncio
-        nest_asyncio.apply()
+        try:
+            import nest_asyncio
+            nest_asyncio.apply()
 
-        self.application = ApplicationBuilder().token(token_kod).build()
+            self.application = ApplicationBuilder().token(token_kod).build()
 
-        # Добавляем обработчики команд
-        self.application.add_handler(CommandHandler("start", self.telegram_start))
-        self.application.add_handler(CommandHandler("help", self.telegram_help))
-        self.application.add_handler(
-            MessageHandler(filters.TEXT & ~filters.COMMAND, self.telegram_process_message)
-        )
-        # Добавляем обработчики callback-ов
-        self.application.add_handler(
-            CallbackQueryHandler(self.handle_method_callback, pattern="^method_")
-        )
-        self.application.add_handler(
-            CallbackQueryHandler(self.handle_option_callback, pattern="^option_")
-        )
+            # Добавляем обработчики команд
+            self.application.add_handler(CommandHandler("start", self.telegram_start))
+            self.application.add_handler(CommandHandler("help", self.telegram_help))
+            self.application.add_handler(CommandHandler("info", self.telegram_info))  # Добавлен новый обработчик
+            self.application.add_handler(
+                MessageHandler(filters.TEXT & ~filters.COMMAND, self.telegram_process_message)
+            )
+            # Добавляем обработчики callback-ов
+            self.application.add_handler(
+                CallbackQueryHandler(self.handle_method_callback, pattern="^method_")
+            )
+            self.application.add_handler(
+                CallbackQueryHandler(self.handle_option_callback, pattern="^option_")
+            )
 
-        # Запускаем бота
-        self.application.run_polling()
+            # Запускаем бота
+            self.application.run_polling()
+        except Exception as e:
+            print(f"Ошибка в потоке Telegram бота: {e}")
+
+        finally:
+            print("Поток Telegram бота завершен")
 
     async def telegram_start(self, update: Update, context: CallbackContext):
         """Обработчик команды /start"""
@@ -453,7 +548,9 @@ class ExampleApp(wx.Frame):
         return names.get(option_code, option_code)
 
     def check_telegram_messages(self, event):
-        """Проверяет сообщения от Telegram бота и обрабатывает их"""
+        """Проверяет сообщения от Telegram бота"""
+        if self.should_exit:
+            return
         while not message_queue.empty():
             message = message_queue.get()
             if message[0] == 'process':
@@ -498,13 +595,26 @@ class ExampleApp(wx.Frame):
 
     def OnClose(self, event):
         """Обработчик закрытия окна"""
+        # Остановка таймера
+        self.timer.Stop()
+
+        # Завершение Telegram бота
         if hasattr(self, 'application'):
-            # Используем asyncio для корректного завершения бота
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(self.application.stop())
-            loop.close()
-        event.Skip()
+            try:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(self.application.shutdown())
+                loop.run_until_complete(self.application.stop())
+                loop.close()
+            except Exception as e:
+                print(f"Ошибка при остановке бота: {e}")
+
+        # Убедимся, что поток Telegram бота завершен
+        if hasattr(self, 'telegram_thread'):
+            self.telegram_thread.join(timeout=1.0)
+
+        # Уничтожение окна
+        self.Destroy()
 
 
 # Создание экземпляра приложения перед главным циклом
